@@ -15,3 +15,4 @@ http://artyomovlab.wustl.edu/aging/
 * PRJNA392905 / GSE100738 - monocytes ATAC-Seq data with replicates - better consistency within replicates + automatic markup
 _PRJNA392905 - ATAC-Seq SPAN MACS2 replicates consistency.ipynb_ and _PRJN392905 - ATAC-Seq SPAN MACS vs DNAse.ipynb_
 * mcgill Original approach for peak caller tuning.
+* GSE53643 - Replicated H3K4me2 consistency
