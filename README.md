@@ -16,3 +16,4 @@ http://artyomovlab.wustl.edu/aging/
 _PRJNA392905 - ATAC-Seq SPAN MACS2 replicates consistency.ipynb_ and _PRJN392905 - ATAC-Seq SPAN MACS vs DNAse.ipynb_
 * mcgill Original approach for peak caller tuning.
 * GSE53643 - Replicated H3K4me2 consistency
+* GSE104284 - Replicated K27ac K4me1 K4me3 for mice muscles injury conditions
