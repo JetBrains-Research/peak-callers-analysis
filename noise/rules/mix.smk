@@ -2,7 +2,7 @@
 localrules: all_mix_results
 
 rule all_mix_results:
-    input: expand('mix/{sample}_{noise}_{n}.bam', sample=[config['sample']], noise=list(range(10))+[9.5, 9.9], n=range(int(config['n'])))
+    input: expand('mix/{sample}_{noise}_{n}.bam', sample=[config['sample']], noise=range(10), n=range(int(config['n'])))
 
 rule mix:
     input:
