@@ -30,4 +30,4 @@ sicer_evalue: 100
 span_bin: 200
 span_gap: 5
 span_fdr: 0.01
-span_params: ""
+span_markup: ""

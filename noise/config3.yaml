@@ -14,20 +14,20 @@ trim_reads: False
 genome: hg19
 
 # ======================== MACS2 ========================
-# MACS2 Broad
-macs2_mode: broad
-macs2_params: "--broad --broad-cutoff 0.1"
-macs2_suffix: broad0.1 # do not use underscores here otherwise wrong sample wildcards
+# MACS2 Narrow:
+macs2_mode: narrow
+macs2_params: "-q 0.05"
+macs2_suffix: q0.05 # do not use underscores here otherwise wrong sample wildcards
 
 # ======================== SICER ========================
 sicer_fragment: 150
 sicer_window: 200
 sicer_gap: 600
-sicer_fdr: 0.01
+sicer_fdr: 0.05
 sicer_evalue: 100
 
 # ======================== SPAN ========================
 span_bin: 200
 span_gap: 5
-span_fdr: 1E-6
+span_fdr: 0.05
 span_markup: ""

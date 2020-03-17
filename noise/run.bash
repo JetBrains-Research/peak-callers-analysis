@@ -1,0 +1,59 @@
+#K27ac
+cd /mnt/stripe/shpynov/span-noise-experiment/H3K27ac/
+#CONFIG1
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config2.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config3.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config4.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config5.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config6.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+#SPAN tuned
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD7_k27ac_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam span_markup=/mnt/stripe/bio/raw-data/aging/manual_peaks_annotations/H3K27ac_labels.bed
+
+#K27me3
+cd /mnt/stripe/shpynov/span-noise-experiment/H3K27me3/
+#CONFIG1
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config2.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config3.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config4.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config5.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config6.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+#SPAN TUNED
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD19_k27me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam span_markup=/mnt/stripe/bio/raw-data/aging/manual_peaks_annotations/H3K27me3_labels.bed
+
+#K4me3
+cd /mnt/stripe/shpynov/span-noise-experiment/H3K4me3/
+#CONFIG1
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config2.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config3.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config4.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config5.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config6.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+#SPAN TUNED
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD13_k4me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam span_markup=/mnt/stripe/bio/raw-data/aging/manual_peaks_annotations/H3K4me3_labels.bed
+
+#K36me3
+cd /mnt/stripe/shpynov/span-noise-experiment/H3K36me3/
+#CONFIG1
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config2.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config3.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config4.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config5.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config6.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+#SPAN TUNED
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD13_k36me3_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam span_markup=/mnt/stripe/bio/raw-data/aging/manual_peaks_annotations/H3K36me3_labels.bed
+
+#K4me1
+cd /mnt/stripe/shpynov/span-noise-experiment/H3K4me1/
+#CONFIG1
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3  input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config2.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config3.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config4.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config5.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config6.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3 input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam
+# SPAN TUNED
+snakemake -s /mnt/stripe/shpynov/span-paper/noise/Snakefile all --use-conda --configfile /mnt/stripe/shpynov/span-paper/noise/config.yaml --config bam_dir=$(pwd) sample=OD13_k4me1_hg19 input1=/mnt/stripe/shpynov/span-noise-experiment/input1.bam n=3  input2=/mnt/stripe/shpynov/span-noise-experiment/input2.bam span_markup=/mnt/stripe/bio/raw-data/aging/manual_peaks_annotations/H3K4me1_labels.bed
