@@ -14,3 +14,4 @@ rule mix:
     shell:
          f'bash scripts/join_files.sh {{input}} {config["input1"]} {{wildcards.noise}} {{output}}'
 
+

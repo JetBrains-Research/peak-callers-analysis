@@ -67,7 +67,7 @@ rule all_sicer_results:
 
 rule bam_to_pileup:
     input: 'mix/{name}.bam'
-    output: temp('pileup/{name}.bed')
+    output: 'pileup/{name}.bed'
 
     conda: '../envs/bio.env.yaml'
     shell: 'bedtools bamtobed -i {input} > {output}'
