@@ -1,5 +1,5 @@
-span-paper
-==========
+span-analysis
+=============
 
 Analysis and comparison scripts for [SPAN](https://research.jetbrains.org/groups/biolabs/tools/span-peak-analyzer).
 
