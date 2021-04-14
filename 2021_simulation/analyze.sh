@@ -26,6 +26,9 @@ for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do echo $M; TRUTH=$(find /mn
 echo "SPAN NBHMM4"
 for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do echo $M; TRUTH=$(find /mnt/stripe/shpynov/2021_noise2/chr15/ -name "$M*"); echo $TRUTH; TP=$(cat $TRUTH | wc -l); echo "True peaks $TP"; for F in $(find /mnt/stripe/shpynov/2021_noise2/nbhmm4/ -name "${M}_*.peak"); do echo $F; PEAKS=$(cat $F | wc -l); FDR=$(echo $F | sed -E 's/.*_|\.peak//g'); SENSITIVITY=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l); SPECIFICITY=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l); echo "Fdr $FDR Peaks $PEAKS Sensitivity $SENSITIVITY Specificity $SPECIFICITY"; echo "$M$T$TP${T}Nbhmm4$T$FDR$T$PEAKS$T$SENSITIVITY$T$SPECIFICITY" >> report.tsv;  done;  echo ""; done
 
+echo "SPAN islands"
+for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do echo $M; TRUTH=$(find /mnt/stripe/shpynov/2021_noise2/chr15/ -name "$M*"); echo $TRUTH; TP=$(cat $TRUTH | wc -l); echo "True peaks $TP"; for F in $(find /mnt/stripe/shpynov/2021_noise2/islands/ -name "${M}_*.peak"); do echo $F; PEAKS=$(cat $F | wc -l); FDR=$(echo $F | sed -E 's/.*_|\.peak//g'); SENSITIVITY=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l); SPECIFICITY=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l); echo "Fdr $FDR Peaks $PEAKS Sensitivity $SENSITIVITY Specificity $SPECIFICITY"; echo "$M$T$TP${T}Islands$T$FDR$T$PEAKS$T$SENSITIVITY$T$SPECIFICITY" >> report.tsv;  done;  echo ""; done
+
 
 
 

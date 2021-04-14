@@ -89,10 +89,32 @@ rule call_peaks_span_nbhmm4nz:
         '-peaks {output} -fdr {wildcards.fdr} '
         '-cs /mnt/stripe/shpynov/2021_noise2/hg38.chrom.sizes &> {log}'
 
+
+######## islands ##################
+rule all_span_islands_results:
+    input:
+        span_peaks=expand(
+            f'/mnt/stripe/shpynov/2021_noise2/islands/{{sample}}_{config["fdr"]}.peak',
+            sample=SAMPLES
+        )
+
+rule call_peaks_span_islands:
+    input:
+        signal=f'/mnt/stripe/shpynov/2021_noise2/bams/{{sample}}.bam'
+    output: f'/mnt/stripe/shpynov/2021_noise2/islands/{{sample}}_{{fdr}}.peak'
+    log: f'nbhmm2nz_{{sample}}_{{fdr}}.log'
+    shell:
+        'cd /mnt/stripe/shpynov/2021_noise2 && '
+        'java -jar /mnt/stripe/shpynov/2021_noise2/span234.jar analyze-experimental --islands '
+        '-t /mnt/stripe/shpynov/2021_noise2/bams/{wildcards.sample}.bam '
+        '-peaks {output} -fdr {wildcards.fdr} '
+        '-cs /mnt/stripe/shpynov/2021_noise2/hg38.chrom.sizes &> {log}'
+
 rule all:
     input:
         rules.all_span_nbhmm2nz_results.input,
         rules.all_span_nbhmm3nz_results.input,
         rules.all_span_nbhmm4_results.input,
+        rules.all_span_islands_results.input,
         # rules.all_span_nbhmm4nz_results.input,
 
