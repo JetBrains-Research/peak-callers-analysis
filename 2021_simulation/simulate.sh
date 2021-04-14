@@ -1,0 +1,10 @@
+chips simreads -p /mnt/stripe/shpynov/2021_noise2/chr15/H3K27ac.bed.chr15 -f  /mnt/stripe/shpynov/2021_noise2/chr15/GRCh38_no_alt_analysis_set_GCA_000001405.15.chr15.fasta  -o H3K27ac -t bed -c 5 --numreads 1000000 --model /mnt/stripe/shpynov/2021_noise2/H3K27ac.json --scale-outliers --seed 12 --thread 24 --numcopies 100000;    
+
+chips simreads -p /mnt/stripe/shpynov/2021_noise2/chr15/H3K27me3.bed.chr15 -f  /mnt/stripe/shpynov/2021_noise2/chr15/GRCh38_no_alt_analysis_set_GCA_000001405.15.chr15.fasta  -o H3K27me3 -t bed -c 5 --numreads 1000000 --model /mnt/stripe/shpynov/2021_noise2/H3K27me3.json --scale-outliers --seed 12 --thread 24 --numcopies 100000;    
+
+chips simreads -p /mnt/stripe/shpynov/2021_noise2/chr15/H3K36me3.bed.chr15 -f  /mnt/stripe/shpynov/2021_noise2/chr15/GRCh38_no_alt_analysis_set_GCA_000001405.15.chr15.fasta  -o H3K36me3 -t bed -c 5 --numreads 1000000 --model /mnt/stripe/shpynov/2021_noise2/H3K36me3.json --scale-outliers --seed 12 --thread 24 --numcopies 100000;    
+
+chips simreads -p /mnt/stripe/shpynov/2021_noise2/chr15/H3K4me1.bed.chr15 -f  /mnt/stripe/shpynov/2021_noise2/chr15/GRCh38_no_alt_analysis_set_GCA_000001405.15.chr15.fasta  -o H3K4me1 -t bed -c 5 --numreads 1000000 --model /mnt/stripe/shpynov/2021_noise2/H3K4me1.json --scale-outliers --seed 12 --thread 24 --numcopies 100000;    
+
+chips simreads -p /mnt/stripe/shpynov/2021_noise2/chr15/H3K4me3.bed.chr15 -f  /mnt/stripe/shpynov/2021_noise2/chr15/GRCh38_no_alt_analysis_set_GCA_000001405.15.chr15.fasta  -o H3K4me3 -t bed -c 5 --numreads 1000000 --model /mnt/stripe/shpynov/2021_noise2/H3K4me3.json --scale-outliers --seed 12 --thread 24 --numcopies 100000;    
+
