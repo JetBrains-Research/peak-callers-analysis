@@ -37,17 +37,7 @@ for PEAKS in encode macs2 sicer span; do
       done;
       echo ""
 
-      echo "SICER"
-      for F in $(find $WORK_DIR/sicer/ -name "${M}_${PEAKS}_chr${i}_*.narrowPeak"); do
-        echo $F;
-        NP=$(cat $F | wc -l);
-        FDR=$(echo $F | sed -E 's/.*_q|_peaks.*//g');
-        PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l);
-        RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l);
-        echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE";
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SICER$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
-      done;
-      echo ""
+      echo "SICER is not supported, because it doesn't support FDR without control file"
 
       echo "SPAN gap 5"
       for F in $(find $WORK_DIR/span/ -name "${M}_${PEAKS}_chr${i}_*_5.peak"); do
@@ -57,7 +47,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l); 
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l); 
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE"; 
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN5$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-GAP5$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""            
       
@@ -69,7 +59,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l); 
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l); 
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE"; 
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN0$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-GAP0$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""            
 
@@ -81,7 +71,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l);
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l);
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE";
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}NBHMM2NZ$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-NBHMM2NZ$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""
 
@@ -93,7 +83,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l);
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l);
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE";
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}NBHMM3NZ$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-NBHMM3NZ$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""
 
@@ -105,7 +95,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l);
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l);
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE";
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}NBHMM4NZ$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-NBHMM4NZ$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""
 
@@ -117,7 +107,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l);
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l);
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE";
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}NBHMM4$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-NBHMM4$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""
 
@@ -129,7 +119,7 @@ for PEAKS in encode macs2 sicer span; do
         PR=$(bedtools intersect -a $TRUTH -b $F -wa -u | wc -l);
         RE=$(bedtools intersect -a $F -b $TRUTH -wa -u | wc -l);
         echo "Fdr $FDR Peaks $NP Precision $PR Recall $RE";
-        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}Islands$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
+        echo "${M}$T${PEAKS}${T}chr$i$T${TP}${T}SPAN-Islands$T${FDR}$T${NP}$T${PR}$T${RE}" >> report.tsv;
       done;
       echo ""
 
