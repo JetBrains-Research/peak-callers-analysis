@@ -25,7 +25,8 @@ Reference
 
 # Download peaks data
 ```
-cd /mnt/stripe/shpynov/2021_noise2
+WORK_DIR=/mnt/stripe/shpynov/2021_chips
+cd $WORK_DIR
 wget https://www.encodeproject.org/files/ENCFF366GZW/@@download/ENCFF366GZW.bed.gz -O H3K4me1.bed.gz
 wget https://www.encodeproject.org/files/ENCFF651GXK/@@download/ENCFF651GXK.bed.gz -O H3K4me3.bed.gz  
 wget https://www.encodeproject.org/files/ENCFF039XWV/@@download/ENCFF039XWV.bed.gz -O H3K27ac.bed.gz
@@ -34,29 +35,19 @@ wget https://www.encodeproject.org/files/ENCFF213IBM/@@download/ENCFF213IBM.bed.
 gunzip *.gz
 ```
 
-# Filter fasta
-`samtools faidx /mnt/stripe/shpynov/2021_noise1/fa/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta chr$i  >> GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta;`
+For MACS2, SICER, SPAN peaks launch chipseq snakemake pipeline from fastq files.
 
 # Learn models
 
-### Pattern
-`chips learn -b ${bam} -p ${peaks} -t bed -c 5 -o ${name}`
-
-`bash learn.sh`
+```
+# Ensure that chips is available!
+bash learn.sh
+```
 
 # Simulate reads
 
-### Pattern
 ```
-chips simreads -p ${peaks} \                                                                                                                                                                   
--f ${ref} \                                                                                                                                                                                   
--o fastqs/${name}_noize${i/./} \                                                                                                                                                              
--t bed -c 5 --numreads ${n_reads} \                                                                                                                                                           
---model ${model} \                                                                                                                                                                            
---scale-outliers --seed 12 --thread 24 --numcopies 100000;
-```
-
-```
+# Ensure that chips is available!
 bash simulate.sh
 mkdir fastq
 mv *.fastq fastq/
@@ -65,11 +56,27 @@ mv *.fastq fastq/
 # Launch peak callers
 ```
 cd /mnt/stripe/shpynov/chipseq-smk-pipeline
+conda activate snakemake
+
+# Perform peak calling using chipseq snakemake pipeline
 for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do
-snakemake all --conda-frontend conda --cores 24 --use-conda --directory /mnt/stripe/shpynov/2021_noise2 --config genome=hg38 fastq_dir=/mnt/stripe/shpynov/2021_noise2/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR
-snakemake all --conda-frontend conda --cores 24 --use-conda --directory /mnt/stripe/shpynov/2021_noise2 --config genome=hg38 fastq_dir=/mnt/stripe/shpynov/2021_noise2/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR;
-snakemake all --conda-frontend conda --cores 24 --use-conda --directory /mnt/stripe/shpynov/2021_noise2 --config genome=hg38 fastq_dir=/mnt/stripe/shpynov/2021_noise2/fastq fastq_ext=fastq span_fdr=$FDR
-snakemake all --conda-frontend conda --cores 24 --use-conda --directory /mnt/stripe/shpynov/2021_noise2 --config genome=hg38 fastq_dir=/mnt/stripe/shpynov/2021_noise2/fastq fastq_ext=fastq span_fdr=$FDR span_gap=0
+  echo "FDR $FDR"
+  
+  echo "MACS2 narrow"
+  snakemake all --cores 24 --use-conda --directory $WORD_DIR \--config genome=hg38 \
+    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR
+  
+  echo "MACS2 broad"
+  snakemake all --cores 24 --use-conda --directory $WORD_DIR --config genome=hg38 \
+    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR;
+  
+  echo "SPAN"
+  snakemake all --cores 24 --use-conda --directory $WORD_DIR --config genome=hg38 \
+    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq span_fdr=$FDR
+  
+  echo "SPAN Gap 0"
+  snakemake all --cores 24 --use-conda --directory $WORD_DIR --config genome=hg38 \
+    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq span_fdr=$FDR span_gap=0    
 done
 ```
 
@@ -78,8 +85,10 @@ done
 SPAN modification `span234.jar` is built from the branch span234.
 
 ```
-cd /mnt/stripe/shpynov/2021_noise2
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do snakemake all --cores 12 --config fdr=$FDR; done
+cd $WORD_DIR
+for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do 
+    snakemake all --cores 12 --config fdr=$FDR; 
+done
 ```
 
 
