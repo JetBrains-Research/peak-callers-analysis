@@ -8,7 +8,8 @@ Benchmarks:
 * `mcgill` - original approach for peak caller tuning
 * `SPAN Comparison Opendnase.ipynb` - benchmark vs DNAse
 * `SPAN H3K4me3 H3K36me3 vs RNA-Seq benchmark.ipynb` 
-* `SPAN noise experiment.ipynb` & `noise` - SPAN analysis in different noise levels
+* `SPAN noise experiment.ipynb` & `2020_noise` - SPAN analysis in different noise levels
+* `2021_simulate` - simulated analysis of SPAN 
 
 Datasets:
 
