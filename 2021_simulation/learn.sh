@@ -9,3 +9,15 @@ for PEAKS in encode macs2 sicer span; do
   done;
 done;
 
+# Generate models with 0.1 0.2 and 0.05 FRIP multipliers
+for MF in $(find peaks/ -name "*.json" | grep -v _); do
+   echo $MF;
+   FRIP=$(cat $MF | grep '"f": ' | sed -E 's/,|.*: //g');
+   echo $FRIP;
+   for M in 0.5 0.2 0.1; do
+     echo $M;
+     FRIPM=0$(echo "$FRIP * $M" | bc -l);
+     echo $FRIPM;
+     cat $MF | sed "s/$FRIP/$FRIPM/" > ${MF/.json/_$M.json};
+  done;
+done

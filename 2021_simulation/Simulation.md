@@ -63,20 +63,20 @@ for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do
   echo "FDR $FDR"
   
   echo "MACS2 narrow"
-  snakemake all --cores 24 --use-conda --directory $WORD_DIR \--config genome=hg38 \
-    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR
+  snakemake all --cores 24 --use-conda --directory $WORK_DIR \--config genome=hg38 \
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR
   
   echo "MACS2 broad"
-  snakemake all --cores 24 --use-conda --directory $WORD_DIR --config genome=hg38 \
-    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR;
+  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR;
   
   echo "SPAN"
-  snakemake all --cores 24 --use-conda --directory $WORD_DIR --config genome=hg38 \
-    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq span_fdr=$FDR
+  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq span_fdr=$FDR
   
   echo "SPAN Gap 0"
-  snakemake all --cores 24 --use-conda --directory $WORD_DIR --config genome=hg38 \
-    fastq_dir=$WORD_DIR/fastq fastq_ext=fastq span_fdr=$FDR span_gap=0    
+  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq span_fdr=$FDR span_gap=0    
 done
 ```
 
@@ -85,7 +85,7 @@ done
 SPAN modification `span234.jar` is built from the branch span234.
 
 ```
-cd $WORD_DIR
+cd $WORK_DIR
 for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do 
     snakemake all --cores 12 --config fdr=$FDR; 
 done

@@ -10,23 +10,42 @@ T=$'\t'
 for PEAKS in encode macs2 sicer span; do
   echo $PEAKS
   for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
-    MF=$PEAKS_DIR/$PEAKS/$M.json
-    PF=$(find $PEAKS_DIR/$PEAKS -name "$M*" | grep -v json);
-    for i in {1..10}; do
-	NAME=${M}_${PEAKS}_chr15_$i
-        TF=$(mktemp);
-	cat $PF | grep chr15 > $TF
-        # Pick random peaks
-        shuf -n 500 $TF | sort -k1,1 -k2,2n > $NAME.bed
-        rm $TF
+    PF=$(find $PEAKS_DIR/$PEAKS -name "$M*" | grep -v json)
+    echo "PEAKS $PF"
+    for I in {1..10}; do
+      NAME="${M}_${PEAKS}_chr15_${I}"
+      TF=$(mktemp)
+      cat "$PF" | grep chr15 >$TF
+      # Pick random peaks
+      shuf -n 500 $TF | sort -k1,1 -k2,2n >$NAME.bed
+      echo "Random peaks $NAME.bed"
+
+      MULTS=("" _0.1 _0.2 _0.5)
+      for MULT in "${MULTS[@]}"; do
+        MNAME="${NAME}${MULT}"
+        MF="$PEAKS_DIR/$PEAKS/$M$MULT.json"
+        echo "MODEL $MF"
         FA=$WORK_DIR/fasta/chr15.fasta
-        echo "Simulating $i $MF chr15 $FA $PF_CHR"
-        chips simreads -p $NAME.bed -f $FA -o ${NAME}_1mln -t bed -c 5 --numreads 1000000 \
-          --model $MF --scale-outliers --seed 42 --thread 24;
-        chips simreads -p $NAME.bed -f $FA -o ${NAME}_100k -t bed -c 5 --numreads 100000 \
-          --model $MF --scale-outliers --seed 42 --thread 24;
-        chips simreads -p $NAME.bed -f $FA -o ${NAME}_500k -t bed -c 5 --numreads 500000 \
-          --model $MF --scale-outliers --seed 42 --thread 24;
-    done;
-  done;
-done;
+
+        echo "Processing $MNAME 1mln"
+        if [[ ! -f ${MNAME}_1mln.fastq ]]; then
+          chips simreads -p $NAME.bed -f $FA -o ${MNAME}_1mln -t bed -c 5 --numreads 1000000 \
+            --model $MF --scale-outliers --seed 42 --thread 24
+        fi
+
+        echo "Processing $MNAME 500k"
+        if [[ ! -f ${MNAME}_500k.fastq ]]; then
+          chips simreads -p $NAME.bed -f $FA -o ${MNAME}_500k -t bed -c 5 --numreads 500000 \
+            --model $MF --scale-outliers --seed 42 --thread 24
+        fi
+
+        echo "Processing $MNAME 100k"
+        if [[ ! -f ${MNAME}_100k.fastq ]]; then
+          chips simreads -p $NAME.bed -f $FA -o ${MNAME}_100k -t bed -c 5 --numreads 100000 \
+            --model $MF --scale-outliers --seed 42 --thread 24
+        fi
+
+      done
+    done
+  done
+done
