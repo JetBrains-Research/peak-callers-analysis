@@ -48,28 +48,7 @@ rule call_peaks_span_nbhmm3nz:
         '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
 
 
-######## nbhmm4 ##################
-rule all_span_nbhmm4_results:
-    input:
-        span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/nbhmm4/{{sample}}_{config["fdr"]}.peak',
-            sample=SAMPLES
-        )
-
-rule call_peaks_span_nbhmm4:
-    input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm4/{{sample}}_{{fdr}}.peak'
-    log: f'logs/nbhmm4/nbhmm4_{{sample}}_{{fdr}}.log'
-    shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm4 '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
-        '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
-
-
-######## nbhmm4 ##################
+######## nbhmm4nz ##################
 rule all_span_nbhmm4nz_results:
     input:
         span_peaks=expand(
@@ -85,6 +64,49 @@ rule call_peaks_span_nbhmm4nz:
     shell:
         'cd /mnt/stripe/shpynov/2021_chips && '
         'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm4nz '
+        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        '-peaks {output} -fdr {wildcards.fdr} '
+        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+
+
+######## nbhmm3z ##################
+rule all_span_nbhmm3z_results:
+    input:
+        span_peaks=expand(
+            f'/mnt/stripe/shpynov/2021_chips/nbhmm3z/{{sample}}_{config["fdr"]}.peak',
+            sample=SAMPLES
+        )
+
+rule call_peaks_span_nbhmm3z:
+    input:
+        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
+    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm3z/{{sample}}_{{fdr}}.peak'
+    log: f'logs/nbhmm3z/nbhmm3z_{{sample}}_{{fdr}}.log'
+    shell:
+        'cd /mnt/stripe/shpynov/2021_chips && '
+        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm3z '
+        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        '-peaks {output} -fdr {wildcards.fdr} '
+        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+
+
+
+######## nbhmm4z ##################
+rule all_span_nbhmm4z_results:
+    input:
+        span_peaks=expand(
+            f'/mnt/stripe/shpynov/2021_chips/nbhmm4z/{{sample}}_{config["fdr"]}.peak',
+            sample=SAMPLES
+        )
+
+rule call_peaks_span_nbhmm4z:
+    input:
+        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
+    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm4z/{{sample}}_{{fdr}}.peak'
+    log: f'logs/nbhmm4z/nbhmm4z_{{sample}}_{{fdr}}.log'
+    shell:
+        'cd /mnt/stripe/shpynov/2021_chips && '
+        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm4z '
         '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
         '-peaks {output} -fdr {wildcards.fdr} '
         '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
@@ -114,8 +136,9 @@ rule all:
     input:
         rules.all_span_nbhmm2nz_results.input,
         rules.all_span_nbhmm3nz_results.input,
-        # rules.all_span_nbhmm4_results.input,
+        rules.all_span_nbhmm4nz_results.input,
+        rules.all_span_nbhmm3z_results.input,
+        rules.all_span_nbhmm4z_results.input,
         rules.all_span_islands_results.input,
-        # rules.all_span_nbhmm4nz_results.input,
 
 
