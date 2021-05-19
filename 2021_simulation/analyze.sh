@@ -89,7 +89,7 @@ for PEAKS in macs2 sicer; do # encode span; do
             PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
             RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
             echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
-            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NBHMM2NZ$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
+            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NZ2$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
           done
           echo ""
 
@@ -102,7 +102,7 @@ for PEAKS in macs2 sicer; do # encode span; do
             PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
             RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
             echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
-            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NBHMM3NZ$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
+            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NZ3$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
           done
           echo ""
 
@@ -115,7 +115,7 @@ for PEAKS in macs2 sicer; do # encode span; do
             PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
             RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
             echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
-            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NBHMM4NZ$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
+            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NZ4$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
           done
           echo ""
 
@@ -128,7 +128,7 @@ for PEAKS in macs2 sicer; do # encode span; do
             PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
             RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
             echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
-            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NBHMM3Z$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
+            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-Z3$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
           done
           echo ""
 
@@ -141,7 +141,7 @@ for PEAKS in macs2 sicer; do # encode span; do
             PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
             RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
             echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
-            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-NBHMM4Z$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
+            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SPAN-Z4$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >>report.tsv
           done
           echo ""
 

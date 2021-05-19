@@ -1,7 +1,8 @@
 Simulation
 ==========
 
-**Chips** (prev. Tulip) is available from bioconda and on [GitHub](https://github.com/gymreklab/chips).
+**Chips** is available from bioconda and on [GitHub](https://github.com/gymreklab/chips).
+Paper in [Bioinformatics](https://link.springer.com/article/10.1186/s12859-021-04097-5).
 
 Works only with fasta and peaks on chromosome 15, otherwise fails.
 
@@ -42,6 +43,7 @@ For MACS2, SICER, SPAN peaks launch chipseq snakemake pipeline from fastq files.
 ```
 # Ensure that chips is available!
 bash learn.sh
+bash frip.sh
 ```
 
 # Simulate reads
@@ -87,7 +89,7 @@ SPAN modification `span234.jar` is built from the branch span234.
 ```
 cd $WORK_DIR
 for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do 
-    snakemake all --cores 12 --config fdr=$FDR; 
+    snakemake all --cores 24 --config fdr=$FDR; 
 done
 ```
 
