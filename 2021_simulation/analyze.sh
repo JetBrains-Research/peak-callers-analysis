@@ -8,7 +8,7 @@ for PEAKS in macs2 sicer; do # encode span; do
   echo "Peaks $PEAKS"
   for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
     echo "Modification $M"
-    for LIB in 100k 500k 1mln; do
+    for LIB in 200k 500k 1mln; do
       for I in {1..5}; do
         echo "Chromosome chr15"
         TPF=$WORK_DIR/fastq/${M}_${PEAKS}_chr15_${I}.bed
@@ -17,7 +17,7 @@ for PEAKS in macs2 sicer; do # encode span; do
         TP=$(cat $TPF | wc -l)
         echo "True peaks $TP length $TL"
 
-        MULTS=("" _0.1 _0.5)
+        MULTS=("" _0.2 _0.5)
         for MULT in "${MULTS[@]}"; do
           echo MULT
 
