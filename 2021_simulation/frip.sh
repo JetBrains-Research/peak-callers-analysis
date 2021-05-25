@@ -4,7 +4,7 @@ WORK_DIR=/mnt/stripe/shpynov/2021_chips
 # conda activate span_noise2a
 
 # Generate models with FRIP multipliers
-for MF in $(find peaks/ -name "*.json" |  grep -v _0.2.json | grep -v _0.5.json); do
+for MF in $(find $PEAKS_DIR -name "*.json" | grep -v _); do
    echo $MF;
    FRIP=$(cat $MF | grep '"s": ' | sed -E 's/,|.*: //g');
    echo $FRIP;

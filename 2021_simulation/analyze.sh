@@ -71,7 +71,7 @@ for PEAKS in macs2 sicer; do # encode span; do
             echo $F
             P=$(cat $F | wc -l)
             L=$(cat $F | awk '{L+=$3-$2} END {print L}')
-            FDR=$(echo $F | sed -E 's/.*200_|_5.peak//g')
+            FDR=$(echo $F | sed -E 's/.*200_|_0.peak//g')
             PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
             RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
             echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
@@ -163,3 +163,4 @@ for PEAKS in macs2 sicer; do # encode span; do
     done
   done
 done
+

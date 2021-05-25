@@ -11,4 +11,3 @@ for PEAKS in encode macs2 sicer span; do
     chips learn -b $BAM -p $PF -t bed -c 5 -o $PEAKS_DIR/$PEAKS/$M
   done;
 done;
-
