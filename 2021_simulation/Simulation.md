@@ -55,6 +55,19 @@ mkdir fastq
 mv *.fastq fastq/
 ```
 
+# Prepare input for peak calling (align control and filter chr15 only)
+```
+for F in $(ls input*.bam | grep -v chr15); do 
+    echo $F; 
+    samtools view $F chr15 -b > ${F/.bam/_chr15.bam}; 
+done
+ 
+for F in input*chr15.bam; do 
+    echo $F; 
+    bedtools bamtofastq -i $F -fq ${F/.bam/.fastq}; 
+done
+```
+
 # Launch peak callers
 ```
 cd /mnt/stripe/shpynov/chipseq-smk-pipeline
