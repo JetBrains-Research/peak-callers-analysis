@@ -53,6 +53,19 @@ for PEAKS in macs2 sicer; do # encode span; do
           done
           echo ""
 
+          echo "SICER"
+          for F in $(find $WORK_DIR/sicer/ -name "${NAME}*-FDR*"); do
+            echo $F
+            P=$(cat $F | wc -l)
+            L=$(cat $F | awk '{L+=$3-$2} END {print L}')
+            FDR=$(echo $F | sed -E 's/.*-FDR//g')
+            PR=$(bedtools intersect -a $TPF -b $F -wa -u | wc -l)
+            RE=$(bedtools intersect -a $F -b $TPF -wa -u | wc -l)
+            echo "Fdr $FDR Peaks $P Precision $PR Recall $RE"
+            echo "${M}$T${PEAKS}${T}$MULT${T}$LIB${T}$I${T}$TPF$T${TP}$T${TL}${T}SICER$T$F${T}${FDR}$T${P}$T${L}$T${PR}$T${RE}" >> report.tsv
+          done
+          echo ""
+
           echo "SPAN gap 5"
           for F in $(find $WORK_DIR/span/ -name "${NAME}_*_5.peak"); do
             echo $F
