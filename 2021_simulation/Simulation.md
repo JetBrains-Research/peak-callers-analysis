@@ -110,3 +110,10 @@ done
 #Analyze 
 Prepare data for visualization and analysis in jupyter notebook.
 `bash analyze.sh`
+
+#Merge No Control and tracks with Control 
+```
+cat ../2021_chips_span_modifications/report.tsv | grep Macs2$'\t' | sed 's/Macs2/Macs2-NC/g' >> report.tsv
+cat ../2021_chips_span_modifications/report.tsv | grep Macs2Broad | sed 's/Macs2Broad/Macs2Broad-NC/g'  >> report.tsv  
+cat ../2021_chips_span_modifications/report.tsv | grep SPAN-GAP5 | sed 's/SPAN-GAP5/SPAN-GAP5-NC/g' >> report.tsv
+```

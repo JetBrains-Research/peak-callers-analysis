@@ -2,92 +2,133 @@ from glob import glob
 import os
 import re
 
+from match_control import find_control_for
+
+WORK_DIR = '/mnt/stripe/shpynov/2021_chips'
+BAMS_DIR = '/mnt/stripe/shpynov/2021_chips/bams'
+
 SAMPLES = list(re.sub('\.bam','',os.path.basename(f))
-               for f in glob('/mnt/stripe/shpynov/2021_chips/bams/*.bam') if
+               for f in glob(BAMS_DIR + '/*.bam') if
                'input' not in f and ('k27' in f.lower() or 'k36' in f.lower() or 'k4' in f.lower()))
+
+SAMPLE_2_CONTROL_MAP = dict(filter(lambda x: x[1], ((sample, find_control_for(BAMS_DIR, sample)) for sample in SAMPLES)))
+
+onstart:
+    print(f"Working directory: {os.getcwd()}")
+    print(f"Snakefile directory: {workflow.basedir}")
+    print(f"Environment: TMPDIR={os.environ.get('TMPDIR', '<n/a>')}")
+    print(f"Environment: PATH={os.environ.get('PATH', '<n/a>')} ")
+    print(f"Config: ", *[f'{k}: {v}' for k, v in config.items()], sep = "\n  ")
+    print(f"SAMPLES: {SAMPLES}")
+    print(f"SAMPLE_2_CONTROL_MAP: {SAMPLE_2_CONTROL_MAP}")
+    print("TOOLS: ")
+    os.system('echo "  bash: $(which bash)"')
+    os.system('echo "  PYTHON: $(which python)"')
+    os.system('echo "  CONDA: $(which conda)"')
+    os.system('echo "  SNAKEMAKE: $(which snakemake)"')
+    os.system('echo "  PYTHON VERSION: $(python --version)"')
+    os.system('echo "  CONDA VERSION: $(conda --version)"')
+    os.system('')
+
 
 ######## nbhmm2nz ##################
 rule all_span_nbhmm2nz_results:
     input:
         span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/nbhmm2nz/{{sample}}_{config["fdr"]}.peak',
+            f'{WORK_DIR}/nbhmm2nz/{{sample}}_{config["fdr"]}.peak',
             sample=SAMPLES
         )
 
 rule call_peaks_span_nbhmm2nz:
     input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm2nz/{{sample}}_{{fdr}}.peak'
+        signal=f'{BAMS_DIR}/{{sample}}.bam'
+    output: f'{WORK_DIR}/nbhmm2nz/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm2nz/nbhmm2nz_{{sample}}_{{fdr}}.log'
+    params:
+        control_arg=lambda wildcards, input: \
+            f' -c {BAMS_DIR}/{SAMPLE_2_CONTROL_MAP[wildcards.sample]}.bam' \
+                if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm2nz '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        f'cd {WORK_DIR} && '
+        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm2nz '
+        f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+        f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
 
 
 ######## nbhmm3nz ##################
 rule all_span_nbhmm3nz_results:
     input:
         span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/nbhmm3nz/{{sample}}_{config["fdr"]}.peak',
+            f'{WORK_DIR}/nbhmm3nz/{{sample}}_{config["fdr"]}.peak',
             sample=SAMPLES
         )
 
 rule call_peaks_span_nbhmm3nz:
     input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm3nz/{{sample}}_{{fdr}}.peak'
+        signal=f'{BAMS_DIR}/{{sample}}.bam'
+    output: f'{WORK_DIR}/nbhmm3nz/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm3nz/nbhmm3nz_{{sample}}_{{fdr}}.log'
+    params:
+        control_arg=lambda wildcards, input: \
+            f' -c {BAMS_DIR}/{SAMPLE_2_CONTROL_MAP[wildcards.sample]}.bam' \
+                if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm3nz '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        f'cd {WORK_DIR} && '
+        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm3nz '
+        f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+        f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
 
 
 ######## nbhmm4nz ##################
 rule all_span_nbhmm4nz_results:
     input:
         span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/nbhmm4nz/{{sample}}_{config["fdr"]}.peak',
+            f'{WORK_DIR}/nbhmm4nz/{{sample}}_{config["fdr"]}.peak',
             sample=SAMPLES
         )
 
 rule call_peaks_span_nbhmm4nz:
     input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm4nz/{{sample}}_{{fdr}}.peak'
+        signal=f'{BAMS_DIR}/{{sample}}.bam'
+    output: f'{WORK_DIR}/nbhmm4nz/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm4nz/nbhmm4nz_{{sample}}_{{fdr}}.log'
+    params:
+        control_arg=lambda wildcards, input: \
+            f' -c {BAMS_DIR}/{SAMPLE_2_CONTROL_MAP[wildcards.sample]}.bam' \
+                if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm4nz '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        f'cd {WORK_DIR} && '
+        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm4nz '
+        f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+        f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
 
 
 ######## nbhmm3z ##################
 rule all_span_nbhmm3z_results:
     input:
         span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/nbhmm3z/{{sample}}_{config["fdr"]}.peak',
+            f'{WORK_DIR}/nbhmm3z/{{sample}}_{config["fdr"]}.peak',
             sample=SAMPLES
         )
 
 rule call_peaks_span_nbhmm3z:
     input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm3z/{{sample}}_{{fdr}}.peak'
+        signal=f'{BAMS_DIR}/{{sample}}.bam'
+    output: f'{WORK_DIR}/nbhmm3z/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm3z/nbhmm3z_{{sample}}_{{fdr}}.log'
+    params:
+        control_arg=lambda wildcards, input: \
+            f' -c {BAMS_DIR}/{SAMPLE_2_CONTROL_MAP[wildcards.sample]}.bam' \
+                if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm3z '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        f'cd {WORK_DIR} && '
+        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm3z '
+        f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+        f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
 
 
 
@@ -95,50 +136,59 @@ rule call_peaks_span_nbhmm3z:
 rule all_span_nbhmm4z_results:
     input:
         span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/nbhmm4z/{{sample}}_{config["fdr"]}.peak',
+            f'{WORK_DIR}/nbhmm4z/{{sample}}_{config["fdr"]}.peak',
             sample=SAMPLES
         )
 
 rule call_peaks_span_nbhmm4z:
     input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/nbhmm4z/{{sample}}_{{fdr}}.peak'
+        signal=f'{BAMS_DIR}/{{sample}}.bam'
+    output: f'{WORK_DIR}/nbhmm4z/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm4z/nbhmm4z_{{sample}}_{{fdr}}.log'
+    params:
+        control_arg=lambda wildcards, input: \
+            f' -c {BAMS_DIR}/{SAMPLE_2_CONTROL_MAP[wildcards.sample]}.bam' \
+                if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --type nbhmm4z '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        f'cd {WORK_DIR} && '
+        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm4z '
+        f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+        f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
+
 
 
 ######## islands ##################
 rule all_span_islands_results:
     input:
         span_peaks=expand(
-            f'/mnt/stripe/shpynov/2021_chips/islands/{{sample}}_{config["fdr"]}.peak',
+            f'{WORK_DIR}/islands/{{sample}}_{config["fdr"]}.peak',
             sample=SAMPLES
         )
 
 rule call_peaks_span_islands:
     input:
-        signal=f'/mnt/stripe/shpynov/2021_chips/bams/{{sample}}.bam'
-    output: f'/mnt/stripe/shpynov/2021_chips/islands/{{sample}}_{{fdr}}.peak'
-    log: f'logs/nbhmm2nz/nbhmm2nz_{{sample}}_{{fdr}}.log'
+        signal=f'{BAMS_DIR}/{{sample}}.bam'
+    output: f'{WORK_DIR}/islands/{{sample}}_{{fdr}}.peak'
+    log: f'logs/islands/islands_{{sample}}_{{fdr}}.log'
+    params:
+        control_arg=lambda wildcards, input: \
+            f' -c {BAMS_DIR}/{SAMPLE_2_CONTROL_MAP[wildcards.sample]}.bam' \ 
+                if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
-        'cd /mnt/stripe/shpynov/2021_chips && '
-        'java -jar /mnt/stripe/shpynov/2021_chips/span234.jar analyze-experimental --islands '
-        '-t /mnt/stripe/shpynov/2021_chips/bams/{wildcards.sample}.bam '
+        f'cd {WORK_DIR} && '
+        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --islands '
+        f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
-        '-cs /mnt/stripe/shpynov/2021_chips/hg38.chrom.sizes &> {log}'
+        f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
 
 rule all:
     input:
-        rules.all_span_nbhmm2nz_results.input,
-        rules.all_span_nbhmm3nz_results.input,
-        rules.all_span_nbhmm4nz_results.input,
-        rules.all_span_nbhmm3z_results.input,
-        rules.all_span_nbhmm4z_results.input,
-        rules.all_span_islands_results.input,
+        # rules.all_span_nbhmm2nz_results.input,
+        # rules.all_span_nbhmm3nz_results.input,
+        # rules.all_span_nbhmm4nz_results.input,
+        # rules.all_span_nbhmm3z_results.input,
+        # rules.all_span_nbhmm4z_results.input,
+        # rules.all_span_islands_results.input,
 
 
