@@ -116,4 +116,8 @@ Prepare data for visualization and analysis in jupyter notebook.
 cat ../2021_chips_span_modifications/report.tsv | grep Macs2$'\t' | sed 's/Macs2/Macs2-NC/g' >> report.tsv
 cat ../2021_chips_span_modifications/report.tsv | grep Macs2Broad | sed 's/Macs2Broad/Macs2Broad-NC/g'  >> report.tsv  
 cat ../2021_chips_span_modifications/report.tsv | grep SPAN-GAP5 | sed 's/SPAN-GAP5/SPAN-GAP5-NC/g' >> report.tsv
+cat ../2021_chips_span_modifications/report.tsv | grep SPAN-GAP0 | sed 's/SPAN-GAP0/SPAN-GAP0-NC/g' >> report.tsv
+cat ../2021_chips_span_modifications/report.tsv | grep SPAN-Islands | sed 's/SPAN-Islands/SPAN-Islands-NC/g' >> report.tsv
+cat ../2021_chips_span_modifications/report.tsv | grep SPAN-NZ >> report.tsv
+cat ../2021_chips_span_modifications/report.tsv | grep SPAN-Z >> report.tsv
 ```
