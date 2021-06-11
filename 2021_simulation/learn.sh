@@ -1,7 +1,7 @@
 PEAKS_DIR=/mnt/stripe/shpynov/2021_chips/peaks
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
 
-# conda activate span_noise2a
+# conda activate chips
 for PEAKS in encode macs2 sicer span; do
   echo $PEAKS
   for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do

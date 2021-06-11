@@ -1,7 +1,7 @@
 PEAKS_DIR=/mnt/stripe/shpynov/2021_chips/peaks
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
 
-# conda activate span_noise2a
+# conda activate chips
 
 # Generate models with FRIP multipliers
 for MF in $(find $PEAKS_DIR -name "*.json" | grep -v _); do
