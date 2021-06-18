@@ -1,5 +1,6 @@
 PEAKS_DIR=/mnt/stripe/shpynov/2021_chips/peaks
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
+N=10
 
 T=$'\t'
 echo "Modification${T}PeaksSource${T}Mult${T}Library${T}I${T}TruePeaksFile${T}TruePeaks${T}TrueLength${T}Tool${T}PeaksFile${T}Fdr${T}Peaks${T}Length${T}Precision${T}Recall" >report.tsv
@@ -9,7 +10,7 @@ for PEAKS in macs2 sicer; do # encode span; do
   for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
     echo "Modification $M"
     for LIB in 200k 500k 1mln; do
-      for I in {1..5}; do
+      for I in $(seq 1 $N); do
         echo "Chromosome chr15"
         TPF=$WORK_DIR/fastq/${M}_${PEAKS}_chr15_${I}.bed
         echo "True peaks file $TPF"
@@ -17,14 +18,10 @@ for PEAKS in macs2 sicer; do # encode span; do
         TP=$(cat $TPF | wc -l)
         echo "True peaks $TP length $TL"
 
-        MULTS=("" _0.2 _0.5)
+        MULTS=(1.0 0.5 0.2)
         for MULT in "${MULTS[@]}"; do
-          echo MULT
 
-          NAME="${M}_${PEAKS}_chr15_${I}${MULT}_${LIB}"
-          if [ -z "$MULT" ]; then
-            MULT="_1.0"
-          fi
+          NAME="${M}_${PEAKS}_chr15_${I}_${MULT}_${LIB}"
           echo "Processing $NAME"
 
           echo "MACS2 narrow"

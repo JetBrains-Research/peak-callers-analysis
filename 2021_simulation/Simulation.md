@@ -4,8 +4,6 @@ Simulation
 **Chips** is available from bioconda and on [GitHub](https://github.com/gymreklab/chips).
 Paper in [Bioinformatics](https://link.springer.com/article/10.1186/s12859-021-04097-5).
 
-Works only with fasta and peaks on chromosome 15, otherwise fails.
-
 # Data
 Download data for human CD14-positive monocyte cells.
 
@@ -24,21 +22,40 @@ Control
 Reference
 * [hg38 reference fa](https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/)
 
-# Download peaks data
+# Download data
 ```
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
 cd $WORK_DIR
+
+# Download precomputed encode peaks
 wget https://www.encodeproject.org/files/ENCFF366GZW/@@download/ENCFF366GZW.bed.gz -O H3K4me1.bed.gz
 wget https://www.encodeproject.org/files/ENCFF651GXK/@@download/ENCFF651GXK.bed.gz -O H3K4me3.bed.gz  
 wget https://www.encodeproject.org/files/ENCFF039XWV/@@download/ENCFF039XWV.bed.gz -O H3K27ac.bed.gz
 wget https://www.encodeproject.org/files/ENCFF666NYB/@@download/ENCFF666NYB.bed.gz -O H3K27me3.bed.gz      
 wget https://www.encodeproject.org/files/ENCFF213IBM/@@download/ENCFF213IBM.bed.gz -O H3K36me3.bed.gz
+
+# Download fastq reads data 
+wget https://www.encodeproject.org/files/ENCFF076WOE/@@download/ENCFF076WOE.fastq.gz - O H3K4me1.fastq.gz
+wget https://www.encodeproject.org/files/ENCFF001FYS/@@download/ENCFF001FYS.fastq.gz -O H3K4me3.fastq.gz
+wget https://www.encodeproject.org/files/ENCFF000CEN/@@download/ENCFF000CEN.fastq.gz -O H3K27ac.fastq.gz
+wget https://www.encodeproject.org/files/ENCFF001FYR/@@download/ENCFF001FYR.fastq.gz -O H3K27me3.fastq.gz      
+wget https://www.encodeproject.org/files/ENCFF000CFB/@@download/ENCFF000CFB.fastq.gz -O H3K36me3.fastq.gz
+ 
+wget https://www.encodeproject.org/files/ENCFF825XKT/@@download/ENCFF825XKT.fastq.gz -O input_H3K4me1.fastq.gz
+wget https://www.encodeproject.org/files/ENCFF001HUV/@@download/ENCFF001HUV.fastq.gz -O input_H3K4me3_H3K27me3.fastq.gz
+wget https://www.encodeproject.org/files/ENCFF692GVG/@@download/ENCFF692GVG.fastq.gz -O input_H3K27ac_H3K36me3.fastq.gz
+
+# Dowload fasta reference
+wget https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz 
+
 gunzip *.gz
 ```
 
-For MACS2, SICER, SPAN peaks launch chipseq snakemake pipeline from fastq files.
+For MACS2, SICER, SPAN peaks launch [ChIP-seq snakemake pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) from fastq files.
+Assuming that it is installed to `/mnt/stripe/shpynov/chipseq-smk-pipeline`.
 
-# Learn models
+
+# Learn models and create modified models with tweaked FRIP
 
 ```
 # Ensure that chips is available!
@@ -55,7 +72,10 @@ mkdir fastq
 mv *.fastq fastq/
 ```
 
-# Prepare input for peak calling (align control and filter chr15 only)
+# Prepare control for peak calling 
+
+1. Launch chipseq pipeline on input files only to obtain bam files. 
+2. Filter to chromosome 15
 ```
 for F in $(ls input*.bam | grep -v chr15); do 
     echo $F; 
@@ -67,57 +87,50 @@ for F in input*chr15.bam; do
     bedtools bamtofastq -i $F -fq ${F/.bam/.fastq}; 
 done
 ```
+3. Copy resulting input fastq files into the `/fastq` folder.
 
 # Launch peak callers
 ```
 cd /mnt/stripe/shpynov/chipseq-smk-pipeline
 conda activate snakemake
 
+WORK_DIR=/mnt/stripe/shpynov/2021_chips
+
 # Perform peak calling using chipseq snakemake pipeline
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do
+for FDR in 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do
   echo "FDR $FDR"
   
   echo "MACS2 narrow"
   snakemake all --cores 24 --use-conda --directory $WORK_DIR \--config genome=hg38 \
-    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR \
+    span_fdr=$FDR sicer_fdr=$FDR;
   
   echo "MACS2 broad"
   snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
-    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR;
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR \
+    span_fdr=$FDR sicer_fdr=$FDR;
   
-  echo "SPAN"
-  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
-    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq span_fdr=$FDR
-  
-  echo "SPAN Gap 0"
-  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
-    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq span_fdr=$FDR span_gap=0    
 done
 ```
 
 
 # Launch SPAN modifications
-SPAN modification `span234.jar` is built from the branch span234.
 
 ```
 cd $WORK_DIR
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do 
-    snakemake all --cores 24 --config fdr=$FDR; 
+for FDR in 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do 
+    snakemake -f span-modifications-smk/Snakefile all --cores 24 --config fdr=$FDR; 
 done
 ```
 
 
-#Analyze 
-Prepare data for visualization and analysis in jupyter notebook.
-`bash analyze.sh`
+#Report
 
-#Merge No Control and tracks with Control 
+Prepare data report by collecting all the peak calling files and overlap with ground truth. 
 ```
-cat ../2021_chips_span_modifications/report.tsv | grep Macs2$'\t' | sed 's/Macs2/Macs2-NC/g' >> report.tsv
-cat ../2021_chips_span_modifications/report.tsv | grep Macs2Broad | sed 's/Macs2Broad/Macs2Broad-NC/g'  >> report.tsv  
-cat ../2021_chips_span_modifications/report.tsv | grep SPAN-GAP5 | sed 's/SPAN-GAP5/SPAN-GAP5-NC/g' >> report.tsv
-cat ../2021_chips_span_modifications/report.tsv | grep SPAN-GAP0 | sed 's/SPAN-GAP0/SPAN-GAP0-NC/g' >> report.tsv
-cat ../2021_chips_span_modifications/report.tsv | grep SPAN-Islands | sed 's/SPAN-Islands/SPAN-Islands-NC/g' >> report.tsv
-cat ../2021_chips_span_modifications/report.tsv | grep SPAN-NZ >> report.tsv
-cat ../2021_chips_span_modifications/report.tsv | grep SPAN-Z >> report.tsv
+bash analyze.sh
 ```
+
+#Visualize results
+
+Launch `analysis.ipynb` jupyter notebook for analysis and visualization of results.
