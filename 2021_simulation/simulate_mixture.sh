@@ -27,15 +27,15 @@ for I in $(seq 1 $N); do
     # Take top 1000 peaks by score, to avoid low scores only
     cat "$TF_NARROW" | grep chr15 | sort -k5,5nr | head -n 1000 > $TF
     # Pick 250 random peaks
-    shuf -n 250 $TF | sort -k1,1 -k2,2n > $TF_NARROW
+    shuf -n 250 $TF | sort -k1,1 -k2,2n > ${NAME}_narrow.bed
 
     # Take top 1000 peaks by score, to avoid low scores only
     cat "$TF_BROAD" | grep chr15 | sort -k5,5nr | head -n 1000 > $TF
     # Pick 250 random peaks
-    shuf -n 250 $TF | sort -k1,1 -k2,2n > $TF_BROAD
+    shuf -n 250 $TF | sort -k1,1 -k2,2n > ${NAME}_broad.bed
 
-    cat $TF_NARROW > $NAME.bed
-    cat $TF_BROAD >> $NAME.bed
+    cat ${NAME}_narrow.bed > $NAME.bed
+    cat ${NAME}_broad.bed >> $NAME.bed
     # Sort peaks
     sort -k1,1 -k2,2n -o $NAME.bed $NAME.bed
 

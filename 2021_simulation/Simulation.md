@@ -98,7 +98,7 @@ conda activate snakemake
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
 
 # Perform peak calling using chipseq snakemake pipeline
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do
+for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6 1e-8 1e-10; do
   echo "FDR $FDR"
   
   echo "MACS2 narrow"
@@ -119,8 +119,8 @@ done
 
 ```
 cd $WORK_DIR
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6; do 
-    snakemake -f span-modifications-smk/Snakefile all --cores 24 --config fdr=$FDR; 
+for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6 1e-8 1e-10; do 
+    snakemake -f SpanModificationsSnakefile all --cores 24 --config fdr=$FDR; 
 done
 ```
 
