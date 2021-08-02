@@ -44,37 +44,22 @@ for I in $(seq 1 $N); do
     MULTS=(1.0 0.5 0.2);
     for MULT in "${MULTS[@]}"; do
       RESULT="${NAME}_${MULT}"
-      MF_NARROW="$PEAKS_DIR/H3K4me3_${MULT}.json"
-      echo "MODEL $MF_NARROW"
-      MF_BROAD="$PEAKS_DIR/H3K36me3_${MULT}.json"
-      echo "MODEL $MF_BROAD"
+      # Use K4me1 as mixed mark
+      MF="$PEAKS_DIR/H3K4me1_${MULT}.json"
+      echo "MODEL $MF"
 
       echo "Processing $RESULT 1mln"
-      chips simreads -p $TF_NARROW -f $FASTA -o narrow -t bed -c 5 --numreads 500000 \
-        --model $MF_NARROW --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
-      chips simreads -p $TF_BROAD -f $FASTA -o broad -t bed -c 5 --numreads 500000 \
-        --model $MF_BROAD --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
-      cat narrow.fastq > ${RESULT}_1mln.fastq
-      cat broad.fastq >> ${RESULT}_1mln.fastq
+      chips simreads -p $NAME.bed -f $FASTA -o ${RESULT}_1mln -t bed -c 5 --numreads 1000000 \
+        --model $MF --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
 
       echo "Processing $RESULT 500k"
-      chips simreads -p $TF_NARROW -f $FASTA -o narrow -t bed -c 5 --numreads 250000 \
-        --model $MF_NARROW --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
-      chips simreads -p $TF_BROAD -f $FASTA -o broad -t bed -c 5 --numreads 250000 \
-        --model $MF_BROAD --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
-      cat narrow.fastq > ${RESULT}_500k.fastq
-      cat broad.fastq >> ${RESULT}_500k.fastq
+      chips simreads -p $NAME.bed -f $FASTA -o ${RESULT}_500k -t bed -c 5 --numreads 500000 \
+        --model $MF --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
 
       echo "Processing $RESULT 200k"
-      chips simreads -p $TF_NARROW -f $FASTA -o narrow -t bed -c 5 --numreads 100000 \
-        --model $MF_NARROW --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
-      chips simreads -p $TF_BROAD -f $FASTA -o broad -t bed -c 5 --numreads 100000 \
-        --model $MF_BROAD --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
-      cat narrow.fastq > ${RESULT}_200k.fastq
-      cat broad.fastq >> ${RESULT}_200k.fastq
+      chips simreads -p $NAME.bed -f $FASTA -o ${RESULT}_200k -t bed -c 5 --numreads 200000 \
+        --model $MF --region $CHR15 --scale-outliers --seed 42 --thread $THREADS
 
-      rm narrow.fastq
-      rm broad.fastq
     done
   fi
 done
