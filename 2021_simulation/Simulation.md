@@ -96,18 +96,19 @@ cd /mnt/stripe/shpynov/chipseq-smk-pipeline
 conda activate snakemake
 
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
+GENOME=hg38
 
 # Perform peak calling using chipseq snakemake pipeline
 for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6 1e-8 1e-10; do
   echo "FDR $FDR"
   
   echo "MACS2 narrow"
-  snakemake all --cores 24 --use-conda --directory $WORK_DIR \--config genome=hg38 \
+  snakemake all --cores 24 --use-conda --directory $WORK_DIR \--config genome=$GENOME \
     fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR \
     span_fdr=$FDR sicer_fdr=$FDR;
   
   echo "MACS2 broad"
-  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=hg38 \
+  snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
     fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR \
     span_fdr=$FDR sicer_fdr=$FDR;
   
