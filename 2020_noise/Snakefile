@@ -4,6 +4,7 @@ from glob import glob
 
 if not os.path.exists(config['bam_dir']):
     raise ValueError(f"Reads directory not exists: {config['bam_dir']}")
+
 BAM_PATHS = list(glob(os.path.join(config['bam_dir'], '*.bam')))
 
 def names_wo_ext(bam_paths):
@@ -44,10 +45,6 @@ onstart:
 
 include: "rules/snr.smk"
 include: "rules/mix.smk"
-include: "rules/visualize.smk"
-include: "rules/macs2.smk"
-include: "rules/sicer.smk"
-include: "rules/span.smk"
 
 wildcard_constraints:
     sample="[^/]+"
@@ -56,17 +53,7 @@ localrules: all
 
 rule all:
     input:
-        # Signal to noise ratio computations
-        # rules.all_snr_results.input,
+        # Signal-to-noise ratio computations
+        rules.all_snr_results.input,
         # Mix all
         rules.all_mix_results.input,
-        # BigWig
-        #rules.all_reads_coverage_results.input,
-        # MACS2
-        #rules.all_macs2_results.input,
-        # SICER
-        #rules.all_sicer_results.input,
-        # SPAN
-        #rules.all_span_results.input,
-        #rules.all_span_tuned_results.input,
-	rules.all_span_replicated_results.input
