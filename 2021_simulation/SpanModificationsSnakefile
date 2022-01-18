@@ -68,6 +68,10 @@ onstart:
     os.system('echo "  CONDA VERSION: $(conda --version)"')
     os.system('')
 
+rule download_span:
+    output: 'bin/span-1.0.XXX.jar'
+    shell: 'wget -O {output} https://download.jetbrains.com/biolabs/span/span-1.0.XXX.jar'
+
 
 ######## nbhmm2nz ##################
 rule all_span_nbhmm2nz_results:
@@ -79,6 +83,7 @@ rule all_span_nbhmm2nz_results:
 
 rule call_peaks_span_nbhmm2nz:
     input:
+        span=rules.download_span.output,
         signal=f'{BAMS_DIR}/{{sample}}.bam'
     output: f'{WORK_DIR}/nbhmm2nz/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm2nz/nbhmm2nz_{{sample}}_{{fdr}}.log'
@@ -88,7 +93,7 @@ rule call_peaks_span_nbhmm2nz:
                 if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
         f'cd {WORK_DIR} && '
-        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm2nz '
+        f'java -jar {{input.span}} analyze-experimental --model-type nbhmm2nz '
         f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
         f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
@@ -104,6 +109,7 @@ rule all_span_nbhmm3nz_results:
 
 rule call_peaks_span_nbhmm3nz:
     input:
+        span=rules.download_span.output,
         signal=f'{BAMS_DIR}/{{sample}}.bam'
     output: f'{WORK_DIR}/nbhmm3nz/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm3nz/nbhmm3nz_{{sample}}_{{fdr}}.log'
@@ -113,7 +119,7 @@ rule call_peaks_span_nbhmm3nz:
                 if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
         f'cd {WORK_DIR} && '
-        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm3nz '
+        f'java -jar {{input.span}} analyze-experimental --model-type nbhmm3nz '
         f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
         f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
@@ -129,6 +135,7 @@ rule all_span_nbhmm4nz_results:
 
 rule call_peaks_span_nbhmm4nz:
     input:
+        span=rules.download_span.output,
         signal=f'{BAMS_DIR}/{{sample}}.bam'
     output: f'{WORK_DIR}/nbhmm4nz/{{sample}}_{{fdr}}.peak'
     log: f'logs/nbhmm4nz/nbhmm4nz_{{sample}}_{{fdr}}.log'
@@ -138,7 +145,7 @@ rule call_peaks_span_nbhmm4nz:
                 if wildcards.sample in SAMPLE_2_CONTROL_MAP else ''
     shell:
         f'cd {WORK_DIR} && '
-        f'java -jar {WORK_DIR}/span234.jar analyze-experimental --type nbhmm4nz '
+        f'java -jar {{input.span}} analyze-experimental --model-type nbhmm4nz '
         f'-t {BAMS_DIR}/{{wildcards.sample}}.bam {{params.control_arg}} '
         '-peaks {output} -fdr {wildcards.fdr} '
         f'-cs {WORK_DIR}/hg38.chrom.sizes &> {{log}}'
