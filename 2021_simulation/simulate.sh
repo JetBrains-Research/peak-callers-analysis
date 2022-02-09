@@ -1,8 +1,16 @@
-FASTA=/mnt/stripe/shpynov/2021_chips/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
-CHR15="chr15:1-101991190"
-PEAKS_DIR=/mnt/stripe/shpynov/2021_chips/peaks
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
-N=10
+MODELS_DIR=$WORK_DIR/models
+FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
+
+CHROMOSOME="chr15"
+RANGE="chr15:1-101991190"
+
+PEAKS1=1000
+PEAKS2=500
+
+MULTS=(0.5 0.3 0.1)
+N=5
+THREADS=24
 
 OF=$WORK_DIR/fastq
 mkdir -p $OF
@@ -10,37 +18,31 @@ cd $OF
 
 T=$'\t'
 for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
-  PF=$(find $PEAKS_DIR -name "$M*" | grep -v json)
+  PF=$(find $MODELS_DIR -name "$M*" | grep -v json)
   echo "$PF"
 
   for I in $(seq 1 $N); do
-    NAME="${M}_chr15_${I}"
+    NAME="${M}_${CHROMOSOME}_${I}"
     if [[ ! -f ${NAME}.bed ]]; then
+      echo "Generate random peaks $NAME.bed"
       TF=$(mktemp)
-      # Take top 1000 peaks by score, to avoid low scores only
-      cat "$PF" | grep chr15 | sort -k5,5nr | head -n 1000 > $TF
-      # Pick 500 random peaks
-      shuf -n 500 $TF | sort -k1,1 -k2,2n > $NAME.bed
-      echo "Random peaks $NAME.bed"
+      # Take top peaks by score, to avoid low scores only
+      cat "$PF" | grep $CHROMOSOME$T | sort -k5,5nr | head -n $PEAKS1 > $TF
+      # Pick random peaks
+      shuf -n $PEAKS2 $TF | sort -k1,1 -k2,2n > $NAME.bed
+    fi;
 
-      MULTS=(1.0 0.5 0.2);
-      for MULT in "${MULTS[@]}"; do
-        RESULT="${NAME}_${MULT}"
-        MF="$PEAKS_DIR/${M}_${MULT}.json"
-        echo "MODEL $MF"
+    for MULT in "${MULTS[@]}"; do
+      RESULT="${NAME}_${MULT}"
+      MF="$MODELS_DIR/${M}_${MULT}.json"
 
-        echo "Processing $RESULT 1mln"
+      if [[ ! -f ${RESULT}_1mln.fastq* ]]; then
+        echo "Model $MF"
+        echo "Random peaks $NAME.bed"
+        echo "Processing $RESULT_1mln"
         chips simreads -p $NAME.bed -f $FASTA -o ${RESULT}_1mln -t bed -c 5 --numreads 1000000 \
-          --model $MF --region $CHR15 --scale-outliers --seed 42 --thread 24
-
-        echo "Processing $RESULT 500k"
-        chips simreads -p $NAME.bed -f $FASTA -o ${RESULT}_500k -t bed -c 5 --numreads 500000 \
-                    --model $MF --region $CHR15 --scale-outliers --seed 42 --thread 24
-
-        echo "Processing $RESULT 200k"
-        chips simreads -p $NAME.bed -f $FASTA -o ${RESULT}_200k -t bed -c 5 --numreads 200000 \
-          --model $MF --region $CHR15 --scale-outliers --seed 42 --thread 24
-      done
-    fi
+          --model $MF --region $RANGE --scale-outliers --seed 42 --thread $THREADS
+      fi
+    done
   done
 done

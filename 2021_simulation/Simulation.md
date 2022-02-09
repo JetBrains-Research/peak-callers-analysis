@@ -72,6 +72,16 @@ mkdir fastq
 mv *.fastq fastq/
 ```
 
+
+# Simulate mixed_reads
+
+```
+# Ensure that chips is available!
+bash simulate_mixture.sh
+mv *.fastq fastq/
+```
+
+
 # Prepare control for peak calling 
 
 1. Launch chipseq pipeline on input files only to obtain bam files. 
@@ -99,28 +109,27 @@ WORK_DIR=/mnt/stripe/shpynov/2021_chips
 GENOME=hg38
 
 # Perform peak calling using chipseq snakemake pipeline
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6 1e-8 1e-10; do
+for FDR in 0.05; do
   echo "FDR $FDR"
   
   echo "MACS2 narrow"
   snakemake all --cores 24 --use-conda --directory $WORK_DIR \--config genome=$GENOME \
-    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="-q $FDR" macs2_mode=narrow macs2_suffix=q$FDR \
-    span_fdr=$FDR sicer_fdr=$FDR;
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_mode=narrow macs2_params="-q $FDR" macs2_suffix=q$FDR \
+    span_gap=3 span_fdr=$FDR sicer_fdr=$FDR;
   
   echo "MACS2 broad"
   snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
-    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR \
-    span_fdr=$FDR sicer_fdr=$FDR;
+    fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_mode=broad macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR \
+    span_gap=3 span_fdr=$FDR sicer_fdr=$FDR;
   
 done
 ```
-
 
 # Launch SPAN modifications
 
 ```
 cd $WORK_DIR
-for FDR in 0.1 0.05 0.01 1e-3 1e-4 1e-5 1e-6 1e-8 1e-10; do 
+for FDR in 0.05; do 
     snakemake -f SpanModificationsSnakefile all --cores 24 --config fdr=$FDR; 
 done
 ```

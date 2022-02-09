@@ -1,20 +1,20 @@
-PEAKS_DIR=/mnt/stripe/shpynov/2021_chips/peaks
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
+MODELS_DIR=$WORK_DIR/models
 
-# conda activate chips
+MULTS=(0.5 0.3 0.1);
 
 # Generate models with FRIP multipliers
-for MF in $(find $PEAKS_DIR -name "*.json"); do
+for MF in $(find $MODELS_DIR -name "*.json"); do
    BN=$(basename $MF);
    if [[ -z "$(echo $BN | grep _)" ]]; then
       echo $MF;
       FRIP=$(cat $MF | grep '"s": ' | sed -E 's/,|.*: //g');
       echo $FRIP;
-      for M in 0.5 0.2; do
-        echo $M;
-        FRIPM=0$(echo "$FRIP * $M" | bc -l);
+      for MULT in "${MULTS[@]}"; do
+        echo $MULT;
+        FRIPM=0$(echo "$FRIP * $MULT" | bc -l);
         echo $FRIPM;
-        cat $MF | sed "s/$FRIP/$FRIPM/" > ${MF/.json/_$M.json};
+        cat $MF | sed "s/$FRIP/$FRIPM/" > ${MF/.json/_$MULT.json};
       done;
       ln -sf $MF ${MF/.json/_1.0.json};
    fi;
