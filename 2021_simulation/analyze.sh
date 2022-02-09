@@ -1,8 +1,8 @@
 WORK_DIR=/mnt/stripe/shpynov/2021_chips
 PEAKS_DIR=$WORK_DIR/peaks
 
-MULTS=(0.5 0.3 0.1)
-N=5
+MULTS=(1.0 0.5 0.3 0.1)
+N=10
 
 T=$'\t'
 echo "Modification${T}Mult${T}Library${T}I${T}TruePeaksFile${T}TruePeaks${T}TrueLength${T}Tool${T}PeaksFile${T}Fdr${T}Peaks${T}Length${T}PrecisionP${T}RecallP${T}Intersection" > report.tsv

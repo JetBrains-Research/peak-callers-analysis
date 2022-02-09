@@ -8,8 +8,8 @@ RANGE="chr15:1-101991190"
 PEAKS1=500
 PEAKS2=250
 
-MULTS=(0.5 0.3 0.1)
-N=5
+MULTS=(1.0 0.5 0.3 0.1)
+N=10
 THREADS=24
 
 OF=$WORK_DIR/fastq
@@ -39,8 +39,7 @@ for I in $(seq 1 $N); do
     shuf -n $PEAKS2 $TF > ${NAME}_narrow.bed
 
     # Take top peaks by score, to avoid low scores only
-    bedtools intersect -v -a "$TF_BROAD" -b ${NAME}_narrow.bed |\
-      grep $CHROMOSOME$T | sort -k5,5nr | head -n $PEAKS1 |\
+    cat "$TF_NARROW" | grep $CHROMOSOME$T | sort -k5,5nr | head -n $PEAKS1 |\
       awk -v OFS='\t' '{print $1,$2,$3}' > $TF
     # Pick random peaks
     shuf -n $PEAKS2 $TF > ${NAME}_broad.bed
