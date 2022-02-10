@@ -115,12 +115,12 @@ for FDR in 0.05; do
   echo "MACS2 narrow"
   snakemake all --cores 24 --use-conda --directory $WORK_DIR \--config genome=$GENOME \
     fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_mode=narrow macs2_params="-q $FDR" macs2_suffix=q$FDR \
-    span_gap=3 span_fdr=$FDR sicer_fdr=$FDR;
+    span_gap=3 span_fdr=$FDR span_iterations=20 sicer_fdr=$FDR;
   
   echo "MACS2 broad"
   snakemake all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
     fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_mode=broad macs2_params="--broad --broad-cutoff $FDR" macs2_suffix=broad$FDR \
-    span_gap=3 span_fdr=$FDR sicer_fdr=$FDR;
+    span_gap=3 span_fdr=$FDR span_iterations=20 sicer_fdr=$FDR;
   
 done
 ```
