@@ -72,7 +72,7 @@ for M in mixed H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
           echo $F
           P=$(cat $F | wc -l)
           L=$(cat $F | awk '{L+=$3-$2} END {print L}')
-          FDR=$(echo $F | sed -E 's/.*200_|_3.peak//g')
+          FDR=$(echo $F | sed -E 's/.*00_|_3.peak//g')
           PR=$(bedtools intersect -a $F -b $TPF3 -wa -u | wc -l)
           RE=$(bedtools intersect -a $TPF3 -b $F -wa -u | wc -l)
           INT=$(bedtools intersect -a $TPF3 -b $F | awk '{L+=$3-$2} END {print L}')
