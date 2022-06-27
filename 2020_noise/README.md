@@ -1,3 +1,4 @@
+Pipeline to create mixed ChIP and control reads in given proportions.
 This pipeline is based on https://github.com/JetBrains-Research/chipseq-smk-pipeline
 
 1. BAM samples are in <work_dir>
