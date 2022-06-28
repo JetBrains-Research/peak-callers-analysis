@@ -2,22 +2,42 @@ WORK_DIR=/data/2022_chips
 MODELS_DIR=$WORK_DIR/models
 FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
-CHROMOSOME="chr15"
-RANGE="chr15:1-101991190"
-READS=500000
+CHROMOSOME="chr1"
+RANGE="chr1:1-248956000" # Limit at 1kbp before chromosome end
+READS=1000000
+PEAKS=1000
 
-PEAKS1=1000
-PEAKS2=500
+T=$'\t'
+if [[ ! -f hg38.chrom.sizes.$CHROMOSOME ]]; then
+    cat hg38.chrom.sizes | grep "$CHROMOSOME$T" | awk -v OFS='\t' '{print $1, $2-10000}'> hg38.chrom.sizes.$CHROMOSOME
+fi
 
-MULTS=(0.5 0.3 0.1)
-N=5
-THREADS=24
+MULTS=(1.0 0.5 0.2)
+N=1
+THREADS=8
 
 OF=$WORK_DIR/fastq
 mkdir -p $OF
 cd $OF
 
-T=$'\t'
+function sample_peaks(){
+  PF=$1
+  PEAKS=$2
+  GENOME=$3
+  RESULT=$4
+  echo "Original peaks $(wc -l "$PF")"
+  echo "Generate $PEAKS random peaks"
+  echo "Genome $GENOME"
+  echo "Result $RESULT"
+  TF=$(mktemp)
+  echo "Pick $PEAKS random peaks"
+  shuf -n $PEAKS $PF > $TF
+  echo "Launching shuffle"
+  bedtools shuffle -noOverlapping -i $TF -g $GENOME | sort -k1,1 -k2,2n > $RESULT
+  echo "Generated random peaks $(wc -l "$RESULT")"
+  rm $TF
+}
+
 for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
   PF=$(find $MODELS_DIR -name "$M*" | grep -v json)
   echo "$PF"
@@ -25,13 +45,8 @@ for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
   for I in $(seq 1 $N); do
     NAME="${M}_${CHROMOSOME}_${I}"
     if [[ ! -f ${NAME}.bed ]]; then
-      echo "Generate random peaks $NAME.bed"
-      TF=$(mktemp)
-      # Take top peaks by score, to avoid low scores only
-      cat "$PF" | grep "$CHROMOSOME$T" | sort -k5,5nr | head -n $PEAKS1 > $TF
-      # Pick random peaks
-      shuf -n $PEAKS2 $TF | sort -k1,1 -k2,2n > $NAME.bed
-    fi;
+      sample_peaks $PF $PEAKS $WORK_DIR/hg38.chrom.sizes.$CHROMOSOME $NAME.bed
+    fi
 
     for MULT in "${MULTS[@]}"; do
       RESULT="${NAME}_${MULT}"
@@ -41,7 +56,8 @@ for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
         echo "Model $MF"
         echo "Random peaks $NAME.bed"
         echo "Processing $RESULT"
-        chips simreads -p $NAME.bed -f $FASTA -o ${RESULT} -t bed -c 5 --numreads $READS \
+        echo "Generating $READS reads"
+        chips simreads -p $NAME.bed -f $FASTA -o $RESULT -t bed -c 5 --numreads $READS --numcopies 1000 \
           --model $MF --region $RANGE --scale-outliers --seed 42 --thread $THREADS
       fi
     done

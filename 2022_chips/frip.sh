@@ -1,7 +1,7 @@
 WORK_DIR=/data/2022_chips
 MODELS_DIR=$WORK_DIR/models
 
-MULTS=(0.5 0.3 0.1);
+MULTS=(0.5 0.2);
 
 # Generate models with FRIP multipliers
 for MF in $(find $MODELS_DIR -name "*.json"); do
