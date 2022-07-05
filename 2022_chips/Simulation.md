@@ -100,15 +100,15 @@ mv *.fastq fastq/
 # Prepare control for peak calling 
 
 1. Launch chipseq pipeline on input files only to obtain bam files. 
-2. Filter to chromosome 15
+2. Filter to chromosome N
 ```
-for F in $(ls *input*.bam | grep -v chr15); do 
+for F in $(ls *input*.bam | grep -v chrN); do 
     echo $F;
     samtools index $F; 
-    samtools view $F chr15 -b > ${F/.bam/_chr15.bam}; 
+    samtools view $F chrN -b > ${F/.bam/_chrN.bam}; 
 done
  
-for F in *input*chr15.bam; do 
+for F in *input*chr*.bam; do 
     echo $F; 
     bedtools bamtofastq -i $F -fq ${F/.bam/.fastq}; 
 done
