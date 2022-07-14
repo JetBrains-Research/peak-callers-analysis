@@ -22,7 +22,6 @@ function sample_peaks(){
   RESULT=$3
   echo "Original peaks $(wc -l "$PF")"
   echo "Generate $PEAKS random peaks"
-  echo "Genome $GENOME"
   echo "Result $RESULT"
   TF=$(mktemp)
   TP=$(bc -l <<< "$PEAKS * 10")
