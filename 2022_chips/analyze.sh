@@ -4,8 +4,8 @@ PEAKS_DIR=$WORK_DIR/peaks
 echo "WORK_DIR $WORK_DIR"
 echo "PEAKS_DIR $PEAKS_DIR"
 
-MULTS=(0.5 0.3 0.1)
-N=5
+MULTS=(1.0 0.5 0.2 0.1)
+N=10
 
 T=$'\t'
 echo "Modification${T}Mult${T}Library${T}I${T}TruePeaksFile${T}TruePeaks${T}TrueLength${T}Tool${T}PeaksFile${T}Fdr${T}Peaks${T}Length${T}PrecisionP${T}RecallP${T}Intersection" > report.tsv
