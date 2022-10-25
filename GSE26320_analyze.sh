@@ -10,7 +10,8 @@ echo "BLACKLIST $BLACKLIST"
 mkdir tags
 for BAM in bams/*.bam; do
    echo ${BAM};
-   TAGS=tags/${$(basename $BAM)/.bam/.tags}
+   BN=$(basename $BAM);
+   TAGS=tags/${BN/.bam/.tags}
    if [[ ! -f "$TAGS" ]]; then
       bedtools bamtobed -i ${BAM} |\
          awk -v OFS='\t' -v S=${SHIFT} \
@@ -37,7 +38,7 @@ CELLS=$(ls bed4/*.bed4 | sed 's#.*/##g' | sed -E 's/GSM[0-9]+_//g' | sed 's/_.*/
 echo $CELLS
 for C in ${CELLS[@]}; do
    echo $C;
-   for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
+   for M in CTCF H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
        echo $M;
        for R in rep1 rep2; do
           echo $R;
