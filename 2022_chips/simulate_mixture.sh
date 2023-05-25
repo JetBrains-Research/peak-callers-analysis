@@ -1,22 +1,22 @@
-WORK_DIR=/data/2022_chips
+WORK_DIR=~/data/2023_chips
 MODELS_DIR=$WORK_DIR/models
 FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 CHROMOSOME="chr15"
-RANGE="chr15:1-101991190"
+RANGE="chr15:1-101991189"
 READS=1000000
-PEAKS=250 # Of each type
+PEAKS=500 # Of each type
 DISTANCE=5000
 
-MULTS=(1.0 0.5 0.2 0.1)
-N=1
+MULTS=(1.0 0.5 0.2)
+N=5
 THREADS=8
 
 OF=$WORK_DIR/fastq
 mkdir -p $OF
 cd $OF
 
-PF_NARROW=$(find $MODELS_DIR -name "H3K27ac*" | grep -v json)
+PF_NARROW=$(find $MODELS_DIR -name "H3K4me3*" | grep -v json)
 echo "$PF_NARROW"
 PF_BROAD=$(find $MODELS_DIR -name "H3K36me3*" | grep -v json)
 echo "$PF_BROAD"

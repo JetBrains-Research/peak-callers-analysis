@@ -1,4 +1,4 @@
-WORK_DIR=/data/2022_chips
+WORK_DIR=~/data/2023_chips
 MODELS_DIR=$WORK_DIR/models
 
 MULTS=(0.5 0.2);

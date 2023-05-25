@@ -1,4 +1,4 @@
-WORK_DIR=/data/2022_chips
+WORK_DIR=~/data/2023_chips
 PEAKS_DIR=$WORK_DIR/peaks
 
 # conda activate chips

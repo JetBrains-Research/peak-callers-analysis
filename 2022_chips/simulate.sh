@@ -1,15 +1,15 @@
-WORK_DIR=/data/2022_chips
+WORK_DIR=~/data/2023_chips
 MODELS_DIR=$WORK_DIR/models
 FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 CHROMOSOME="chr15"
-RANGE="chr15:1-101991190"
+RANGE="chr15:1-101991189"
 READS=1000000
-PEAKS=1000
+PEAKS=500
 DISTANCE=5000
 
-MULTS=(1.0 0.5 0.2 0.1)
-N=10
+MULTS=(1.0 0.5 0.2)
+N=5
 THREADS=8
 
 OF=$WORK_DIR/fastq
@@ -39,7 +39,7 @@ function sample_peaks(){
   echo "Generated random peaks $(wc -l "$RESULT")"
 }
 
-for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
+for M in H3K4me3 H3K4me1 H3K27ac H3K27me3 H3K36me3; do
   PF=$(find $MODELS_DIR -name "$M*" | grep -v json)
   echo "$PF"
 
@@ -52,7 +52,7 @@ for M in H3K27ac H3K27me3 H3K36me3 H3K4me1 H3K4me3; do
     for MULT in "${MULTS[@]}"; do
       RESULT="${NAME}_${MULT}"
       MF="$MODELS_DIR/${M}_${MULT}.json"
-
+      # MACS2 fails to build model for smaller numcopies
       for NUMCOPIES in 100 1000 10000; do
         echo "Numcopies $NUMCOPIES"
         if [[ ! -f $RESULT.fastq ]]; then
