@@ -122,7 +122,7 @@ done
 
 conda activate snakemake
 
-WORK_DIR=/mnt/stripe/shpynov/2021_chips
+WORK_DIR=~/2023_chips
 GENOME=hg38
   
 echo "MACS2 narrow"
@@ -138,23 +138,3 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   --rerun-incomplete;
 ```
 
-# Launch SPAN modifications
-
-```
-cd $WORK_DIR
-for FDR in 0.05; do 
-    snakemake -f SpanModificationsSnakefile all --cores 24 --config fdr=$FDR; 
-done
-```
-
-
-#Report
-
-Prepare data report by collecting all the peak calling files and overlap with ground truth. 
-```
-bash analyze.sh
-```
-
-#Visualize results
-
-Launch `analysis.ipynb` jupyter notebook for analysis and visualization of results.

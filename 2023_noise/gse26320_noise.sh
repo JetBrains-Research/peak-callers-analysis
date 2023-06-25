@@ -40,6 +40,25 @@ done;
 mv bams/*mln* ~/22023_GSE26320_noise/bams/
 cd ~/2023_GSE26320_noise
 
+# Peak calling with Snakemake
+conda activate snakemake
+
+snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --cores all  --use-conda  --directory $(pwd) \
+    --config fastq_dir=$(pwd)/bams  start_with_bams=True \
+    macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix="q0.05" \
+    sicer=False span=False
+
+snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --cores all  --use-conda  --directory $(pwd) \
+    --config fastq_dir=$(pwd)/bams  start_with_bams=True \
+    macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff=0.1" macs2_suffix="broad0.1" \
+    sicer=False span=False
+
+snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --cores all  --use-conda  --directory $(pwd) \
+    --config fastq_dir=$(pwd)/bams  start_with_bams=True \
+    sicer=True span=True
+
+
+# Or manual
 echo "Peak calling"
 # MACS2
 # Narrow and broad
@@ -114,7 +133,7 @@ for CT in GM12878 K562 Huvec; do
                 PEAKS=span/${TN/.bam/}_100_q0.05.peak;
                 echo $PEAKS
                 if [[ ! -f $PEAKS ]]; then
-                    java -jar  ~/span-1.1.5628.jar analyze -w span -t $T -c $C -b 100 -clip -p $PEAKS -cs hg38.chrom.sizes -fdr 0.05;
+                    java -jar  ~/span.jar analyze -w span -t $T -c $C -b 100 -clip -p $PEAKS -cs hg38.chrom.sizes -fdr 0.05;
                 fi;
             done;
         done;
