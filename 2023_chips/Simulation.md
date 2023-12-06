@@ -111,9 +111,8 @@ bash frip.sh
 
 ```
 # Ensure that chips is available!
-bash simulate.sh
 mkdir fastq
-mv *.fastq fastq/
+bash simulate.sh
 ```
 
 
@@ -122,7 +121,6 @@ mv *.fastq fastq/
 ```
 # Ensure that chips is available!
 bash simulate_mixture.sh
-mv *.fastq fastq/
 ```
 
 
@@ -142,10 +140,6 @@ for F in bams/*input*chr*.bam; do
     bedtools bamtofastq -i $F -fq ${F/.bam/.fastq}; 
 done
 
-```
-3. Copy resulting input fastq files into the `/fastq` folder.
-   This step is important, otherwise peak calling will be performed without input.
-```
 mv bams/*input*chr*.fastq fastq/
 ```
 
