@@ -1,4 +1,5 @@
 WORK_DIR=~/data/2023_chips
+PEAKS_DIR=$WORK_DIR/peaks
 MODELS_DIR=$WORK_DIR/models
 FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
@@ -8,7 +9,7 @@ READS=1000000
 PEAKS=500 # Of each type
 DISTANCE=5000
 
-MULTS=(0.7 0.1)
+MULTS=(0.7 0.5 0.2 0.1);
 N=5
 THREADS=8
 
@@ -16,9 +17,9 @@ OF=$WORK_DIR/fastq
 mkdir -p $OF
 cd $OF
 
-PF_NARROW=$(find $MODELS_DIR -name "H3K4me3*" | grep -v json)
+PF_NARROW=$(find $PEAKS_DIR -name "H3K4me3*" | grep -v json)
 echo "$PF_NARROW"
-PF_BROAD=$(find $MODELS_DIR -name "H3K36me3*" | grep -v json)
+PF_BROAD=$(find $PEAKS_DIR -name "H3K36me3*" | grep -v json)
 echo "$PF_BROAD"
 
 function sample_peaks(){

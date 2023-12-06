@@ -1,4 +1,5 @@
 WORK_DIR=~/data/2023_chips
+PEAKS_DIR=$WORK_DIR/peaks
 MODELS_DIR=$WORK_DIR/models
 FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
@@ -8,7 +9,7 @@ READS=1000000
 PEAKS=500
 DISTANCE=5000
 
-MULTS=(0.7 0.1)
+MULTS=(0.7 0.5 0.2 0.1);
 N=5
 THREADS=8
 
@@ -40,7 +41,7 @@ function sample_peaks(){
 }
 
 for M in H3K4me3 H3K4me1 H3K27ac H3K27me3 H3K36me3; do
-  PF=$(find $MODELS_DIR -name "$M*" | grep -v json)
+  PF=$(find $PEAKS_DIR -name "$M*" | grep -v json)
   echo "$PF"
 
   for I in $(seq 1 $N); do

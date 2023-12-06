@@ -37,6 +37,7 @@ for READSMLN in 7 5 2 1; do
     done;
 done;
 
+mkdir -p ~/22023_GSE26320_noise/bams
 mv bams/*mln* ~/22023_GSE26320_noise/bams/
 cd ~/2023_GSE26320_noise
 
@@ -45,97 +46,12 @@ conda activate snakemake
 
 snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --cores all  --use-conda  --directory $(pwd) \
     --config fastq_dir=$(pwd)/bams  start_with_bams=True \
-    macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix="q0.05" \
-    sicer=False span=False
+    macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix="q0.05"
 
 snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --cores all  --use-conda  --directory $(pwd) \
     --config fastq_dir=$(pwd)/bams  start_with_bams=True \
-    macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff=0.1" macs2_suffix="broad0.1" \
-    sicer=False span=False
+    macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff=0.1" macs2_suffix="broad0.1"
 
 snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --cores all  --use-conda  --directory $(pwd) \
     --config fastq_dir=$(pwd)/bams  start_with_bams=True \
     sicer=True span=True
-
-
-# Or manual
-echo "Peak calling"
-# MACS2
-# Narrow and broad
-
-conda activate macs2
-mkdir macs2
-
-for CT in GM12878 K562 Huvec; do
-    for M in H3K36me3 H3K4me3 H3K4me1 H3K27ac H3K27me3; do
-        for R in rep1 rep2; do
-            C=$(ls bams/*${CT}*_Input_${R}*.bam);
-            for T in $(ls bams/*${CT}*_${M}_${R}*.bam | grep -v WCE); do
-                echo "$M $CT $R $T $C";
-                TN=$(basename $T);
-                TU=${TN/.bam/};
-                if [[ -z $(find macs2/ -name "${TU}*") ]]; then
-	                macs2 callpeak -t $T -c $C -n ${TU}_q0.05 -g hs -q 0.05;
-	                macs2 callpeak -t $T -c $C -n ${TU}_broad0.1 -g hs --broad --broad-cutoff 0.1;
-                    mv ${TU}*q0.05* macs2/;
-                    mv ${TU}*broad0.1* macs2/;
-                fi;
-            done;
-        done;
-    done;
-done;
-
-# SICER
-conda activate sicer
-mkdir sicer
-D=$(pwd)
-for CT in GM12878 K562 Huvec; do
-    for M in H3K36me3 H3K4me3 H3K4me1 H3K27ac H3K27me3; do
-        for R in rep1 rep2; do
-            C=$(ls bams/*${CT}*_Input_${R}*.bam);
-            for T in $(ls bams/*${CT}*_${M}_${R}*.bam | grep -v WCE); do
-                echo "$M $CT $R $T $C";
-                TN=$(basename $T);
-                TU=${TN/.bam/};
-                CN=$(basename $C);
-                CU=${CN/.bam/};
-                PEAKS=sicer/${TU}-W200-G600-islands-summary-FDR0.01;
-                echo $PEAKS;
-                if [[ ! -f $PEAKS ]]; then
-                    TMP=$(mktemp -d);
-                    mkdir -p $TMP;
-                    echo "$TMP $TU $CU";
-                    bedtools bamtobed -i $T > $TMP/$TU.bed
-                    bedtools bamtobed -i $C > $TMP/$CU.bed
-                    cd $TMP;
-                    mkdir out;
-                    echo "SICER.sh $TMP $TU.bed $CU.bed $TMP/out hg38 1 200 150 0.74 600 0.01;"
-                    SICER.sh $TMP $TU.bed $CU.bed $TMP/out hg38 1 200 150 0.74 600 0.01;
-                    mv out/* $D/sicer;
-                    rm -rf $TMP;
-                    cd $D;
-                fi;
-            done;
-        done;
-    done;
-done;
-
-# SPAN
-mkdir span
-conda activate base
-for CT in GM12878 K562 Huvec; do
-    for M in H3K36me3 H3K4me3 H3K4me1 H3K27ac H3K27me3; do
-        for R in rep1 rep2; do
-            C=$(ls bams/*${CT}*_Input_${R}*.bam);
-            for T in $(ls bams/*${CT}*_${M}_${R}*.bam | grep -v WCE); do
-                echo "$M $CT $R $T $C";
-                TN=$(basename $T);
-                PEAKS=span/${TN/.bam/}_100_q0.05.peak;
-                echo $PEAKS
-                if [[ ! -f $PEAKS ]]; then
-                    java -jar  ~/span.jar analyze -w span -t $T -c $C -b 100 -clip -p $PEAKS -cs hg38.chrom.sizes -fdr 0.05;
-                fi;
-            done;
-        done;
-    done;
-done;

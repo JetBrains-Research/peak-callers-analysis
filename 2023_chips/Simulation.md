@@ -24,21 +24,24 @@ Reference
 
 # Download data
 ```
-WORK_DIR=/mnt/stripe/shpynov/2021_chips
+WORK_DIR=~/data/2023_chips
 cd $WORK_DIR
-
+mkdir -p $WORK_DIR/peaks
+cd peaks
 # Download precomputed encode peaks
 wget https://www.encodeproject.org/files/ENCFF366GZW/@@download/ENCFF366GZW.bed.gz -O H3K4me1.bed.gz
 wget https://www.encodeproject.org/files/ENCFF651GXK/@@download/ENCFF651GXK.bed.gz -O H3K4me3.bed.gz  
 wget https://www.encodeproject.org/files/ENCFF039XWV/@@download/ENCFF039XWV.bed.gz -O H3K27ac.bed.gz
 wget https://www.encodeproject.org/files/ENCFF666NYB/@@download/ENCFF666NYB.bed.gz -O H3K27me3.bed.gz      
 wget https://www.encodeproject.org/files/ENCFF213IBM/@@download/ENCFF213IBM.bed.gz -O H3K36me3.bed.gz
+gunzip *.gz
+cd ..
 
 mkdir fastq
 cd fastq
 
 # Download fastq reads data 
-wget https://www.encodeproject.org/files/ENCFF076WOE/@@download/ENCFF076WOE.fastq.gz - O H3K4me1.fastq.gz
+wget https://www.encodeproject.org/files/ENCFF076WOE/@@download/ENCFF076WOE.fastq.gz -O H3K4me1.fastq.gz
 wget https://www.encodeproject.org/files/ENCFF001FYS/@@download/ENCFF001FYS.fastq.gz -O H3K4me3.fastq.gz
 wget https://www.encodeproject.org/files/ENCFF000CEN/@@download/ENCFF000CEN.fastq.gz -O H3K27ac.fastq.gz
 wget https://www.encodeproject.org/files/ENCFF001FYR/@@download/ENCFF001FYR.fastq.gz -O H3K27me3.fastq.gz      
@@ -64,16 +67,42 @@ cd ..
 For MACS2, SICER, SPAN peaks launch [ChIP-seq snakemake pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) from fastq files.
 Assuming that it is installed to `~/work/chipseq-smk-pipeline`.
 ```
-FDR=0.05; snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
+conda activate snakemake
+
+snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
    fastq_dir=$(pwd)/fastq genome=hg38 \
-   macs2_mode=narrow macs2_params="-q $FDR" macs2_suffix="q$FDR" --rerun-incomplete
+   macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix=q0.05 \
+   --rerun-incomplete --rerun-trigger mtime;
+
+snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
+   all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
+   fastq_dir=$(pwd)/fastq genome=hg38 \
+   macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
+   --rerun-incomplete --rerun-trigger mtime;   
+
+snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
+   all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
+   fastq_dir=$(pwd)/fastq genome=hg38 \
+   sicer=True span=False \
+   --rerun-incomplete --rerun-trigger mtime;   
+```
+
+Copy peaks
+```
+mkdir -p peaks
+cp macs2/H3K4me3*.narrowPeak peaks
+cp macs2/H3K27ac*.broadPeak peaks
+cp macs2/H3K4me1*.broadPeak peaks
+cp sicer/H3K27me3*FDR0.01 peaks
+cp sicer/H3K36me3*FDR0.01 peaks
 ```
 
 # Learn models and create modified models with tweaked FRIP
 
 ```
 # Ensure that chips is available!
+conda activate chips
 bash learn.sh
 bash frip.sh
 ```
@@ -100,41 +129,55 @@ mv *.fastq fastq/
 # Prepare control for peak calling 
 
 1. Launch chipseq pipeline on input files only to obtain bam files. 
-2. Filter to chromosome N
+2. Filter to chromosome 15
 ```
-for F in $(ls *input*.bam | grep -v chrN); do 
+for F in $(ls bams/*input*.bam | grep -v chr15); do 
     echo $F;
     samtools index $F; 
-    samtools view $F chrN -b > ${F/.bam/_chrN.bam}; 
+    samtools view $F chr15 -b > ${F/.bam/_chr15.bam}; 
 done
  
-for F in *input*chr*.bam; do 
+for F in bams/*input*chr*.bam; do 
     echo $F; 
     bedtools bamtofastq -i $F -fq ${F/.bam/.fastq}; 
 done
+
 ```
 3. Copy resulting input fastq files into the `/fastq` folder.
    This step is important, otherwise peak calling will be performed without input.
+```
+mv bams/*input*chr*.fastq fastq/
+```
 
 # Launch peak callers
+
 ```
 # Perform peak calling using chipseq snakemake pipeline
 
 conda activate snakemake
 
-WORK_DIR=~/2023_chips
+WORK_DIR=~/data/2023_chips
 GENOME=hg38
   
 echo "MACS2 narrow"
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
-  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix=q0.05 \
-  --rerun-incomplete;
+  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq \
+  macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix=q0.05 \
+  --rerun-incomplete --rerun-trigger mtime;
   
 echo "MACS2 broad"
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
-  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
-  --rerun-incomplete;
+  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq \
+  macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
+  --rerun-incomplete --rerun-trigger mtime;
+  
+snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
+  all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
+  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq \
+  span=True sicer=True \
+  --rerun-incomplete --rerun-trigger mtime;
+
 ```
 
