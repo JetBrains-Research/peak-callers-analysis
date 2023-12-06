@@ -6,7 +6,7 @@ FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 CHROMOSOME="chr15"
 RANGE="chr15:1-101991189"
 READS=1000000
-PEAKS=500 # Of each type
+PEAKS=250 # Of each type
 DISTANCE=5000
 
 MULTS=(1.0 0.7 0.5 0.2 0.1);
