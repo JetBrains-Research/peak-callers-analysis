@@ -6,7 +6,9 @@ FASTA=$WORK_DIR/fasta/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 CHROMOSOME="chr15"
 RANGE="chr15:1-101991189"
 READS=1000000
-PEAKS=250 # Of each type
+# We make more narrow peaks to increase impact on Jaccard while comparing
+PEAKS_NARROW=400
+PEAKS_BROAD=100
 DISTANCE=5000
 
 MULTS=(1.0 0.7 0.5 0.2 0.1);
@@ -54,12 +56,12 @@ EF=$(mktemp)
 touch $EF
 
 for I in $(seq 1 $N); do
-  NAME="mixed_${CHROMOSOME}_${I}"
+  NAME="mixed_k4me3_k36me3_${CHROMOSOME}_${I}"
   if [[ ! -f ${NAME}.bed ]]; then
     echo "Original peaks $(wc -l "$PF_NARROW") $(wc -l "$PF_BROAD")"
     echo "Generate random peaks file $NAME.bed"
-    sample_peaks $PF_NARROW $PEAKS $EF ${NAME}_narrow.bed
-    sample_peaks $PF_BROAD $PEAKS ${NAME}_narrow.bed ${NAME}_broad.bed
+    sample_peaks $PF_NARROW $PEAKS_NARROW $EF ${NAME}_narrow.bed
+    sample_peaks $PF_BROAD $PEAKS_BROAD ${NAME}_narrow.bed ${NAME}_broad.bed
     cat ${NAME}_narrow.bed > $NAME.bedns
     cat ${NAME}_broad.bed >> $NAME.bedns
     cat $NAME.bedns | sort -k1,1 -k2,2n > $NAME.bed
