@@ -150,28 +150,26 @@ mv bams/*input*chr*.fastq fastq/
 
 conda activate snakemake
 
-WORK_DIR=~/data/2023_chips
-GENOME=hg38
-  
+cd /data/2023_chips
+ 
 echo "MACS2 narrow"
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
-  all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
-  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq \
+  all --cores 24 --use-conda --directory $(pwd) --config genome=hg38 \
+  fastq_dir=$(pwd)/fastq fastq_ext=fastq \
   macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix=q0.05 \
   --rerun-incomplete --rerun-trigger mtime;
   
 echo "MACS2 broad"
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
-  all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
-  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq \
+  all --cores 24 --use-conda --directory $(pwd) --config genome=hg38 \
+  fastq_dir=$(pwd)/fastq fastq_ext=fastq \
   macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
   --rerun-incomplete --rerun-trigger mtime;
   
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
-  all --cores 24 --use-conda --directory $WORK_DIR --config genome=$GENOME \
-  fastq_dir=$WORK_DIR/fastq fastq_ext=fastq \
-  span=True sicer=True \
+  all --cores 24 --use-conda --directory $(pwd) --config genome=hg38 \
+  fastq_dir=$(pwd)/fastq fastq_ext=fastq \
+  span=True span_bin=200 span_params="--clip --keep-cache" sicer=True \
   --rerun-incomplete --rerun-trigger mtime;
-
 ```
 
