@@ -27,20 +27,10 @@ Reference
 WORK_DIR=~/data/2023_chips
 cd $WORK_DIR
 mkdir -p $WORK_DIR/peaks
-cd peaks
-# Download precomputed encode peaks
-wget https://www.encodeproject.org/files/ENCFF366GZW/@@download/ENCFF366GZW.bed.gz -O H3K4me1.bed.gz
-wget https://www.encodeproject.org/files/ENCFF651GXK/@@download/ENCFF651GXK.bed.gz -O H3K4me3.bed.gz  
-wget https://www.encodeproject.org/files/ENCFF039XWV/@@download/ENCFF039XWV.bed.gz -O H3K27ac.bed.gz
-wget https://www.encodeproject.org/files/ENCFF666NYB/@@download/ENCFF666NYB.bed.gz -O H3K27me3.bed.gz      
-wget https://www.encodeproject.org/files/ENCFF213IBM/@@download/ENCFF213IBM.bed.gz -O H3K36me3.bed.gz
-gunzip *.gz
-cd ..
-
-mkdir fastq
-cd fastq
 
 # Download fastq reads data 
+mkdir fastq
+cd fastq
 wget https://www.encodeproject.org/files/ENCFF076WOE/@@download/ENCFF076WOE.fastq.gz -O H3K4me1.fastq.gz
 wget https://www.encodeproject.org/files/ENCFF001FYS/@@download/ENCFF001FYS.fastq.gz -O H3K4me3.fastq.gz
 wget https://www.encodeproject.org/files/ENCFF000CEN/@@download/ENCFF000CEN.fastq.gz -O H3K27ac.fastq.gz
@@ -64,7 +54,7 @@ samtools faidx GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 cd ..
 ```
 
-For MACS2, SICER, SPAN peaks launch [ChIP-seq snakemake pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) from fastq files.
+For MACS2, SICER peaks launch [ChIP-seq snakemake pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) from fastq files.
 Assuming that it is installed to `~/work/chipseq-smk-pipeline`.
 ```
 conda activate snakemake
@@ -88,7 +78,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    --rerun-incomplete --rerun-trigger mtime;   
 ```
 
-Copy peaks
+Copy peaks to sample ground truth from
 ```
 mkdir -p peaks
 cp macs2/H3K4me3*.narrowPeak peaks
@@ -169,7 +159,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   fastq_dir=$(pwd)/fastq fastq_ext=fastq \
-  span=True span_bin=100 span_params="--noclip --keep-cache" sicer=True \
+  span=True span_bin=100 span_threads=2 span_params="--clip 0 --keep-cache" sicer=True \
   --rerun-incomplete --rerun-trigger mtime;
 
 ```

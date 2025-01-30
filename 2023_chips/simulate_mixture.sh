@@ -7,8 +7,8 @@ CHROMOSOME="chr15"
 RANGE="chr15:1-101991189"
 READS=1000000
 # We make more narrow peaks to increase impact on Jaccard while comparing
-PEAKS_NARROW=400
-PEAKS_BROAD=100
+PEAKS_NARROW=300
+PEAKS_BROAD=200
 DISTANCE=5000
 
 MULTS=(1.0 0.7 0.5 0.2 0.1);
@@ -19,9 +19,9 @@ OF=$WORK_DIR/fastq
 mkdir -p $OF
 cd $OF
 
-PF_NARROW=$(find $PEAKS_DIR -name "H3K4me3*" | grep -v json)
+PF_NARROW=$(find $PEAKS_DIR -name "H3K4me3*" | grep -v json | grep -v .50)
 echo "$PF_NARROW"
-PF_BROAD=$(find $PEAKS_DIR -name "H3K36me3*" | grep -v json)
+PF_BROAD=$(find $PEAKS_DIR -name "H3K36me3*" | grep -v json | grep -v .50)
 echo "$PF_BROAD"
 
 function sample_peaks(){
@@ -58,10 +58,20 @@ touch $EF
 for I in $(seq 1 $N); do
   NAME="mixed_k4me3_k36me3_${CHROMOSOME}_${I}"
   if [[ ! -f ${NAME}.bed ]]; then
-    echo "Original peaks $(wc -l "$PF_NARROW") $(wc -l "$PF_BROAD")"
+    N_NARROW=$(cat $PF_NARROW | wc -l)
+    N_BROAD=$(cat $PF_BROAD | wc -l)
+    echo "Original peaks $N_NARROW $N_BROAD"
+    N_NARROW_50=$(bc -l <<< "scale=0;$N_NARROW/2")
+    N_BROAD_50=$(bc -l <<< "scale=0;$N_BROAD/2")
+    echo "Pick shortest 50% from narrow $N_NARROW_50 and widest 50% from broad $N_BROAD_50"
+    cat $PF_NARROW | awk -v OFS='\t' '{print($1,$2,$3,$4,$5,$3-$2);}' | sort -k6,6n | head -n $N_NARROW_50 |\
+      sort -k1,1n -k2,2 > $PF_NARROW.50
+    cat $PF_BROAD | awk -v OFS='\t' '{print($1,$2,$3,$4,$5,$3-$2);}' | sort -k6,6nr | head -n $N_BROAD_50 |\
+      sort -k1,1n -k2,2 > $PF_BROAD.50
     echo "Generate random peaks file $NAME.bed"
-    sample_peaks $PF_NARROW $PEAKS_NARROW $EF ${NAME}_narrow.bed
-    sample_peaks $PF_BROAD $PEAKS_BROAD ${NAME}_narrow.bed ${NAME}_broad.bed
+    sample_peaks $PF_BROAD.50 $PEAKS_BROAD $EF ${NAME}_broad.bed
+    sample_peaks $PF_NARROW.50 $PEAKS_NARROW ${NAME}_broad.bed ${NAME}_narrow.bed
+    rm $PF_NARROW.50 $PF_BROAD.50
     cat ${NAME}_narrow.bed > $NAME.bedns
     cat ${NAME}_broad.bed >> $NAME.bedns
     cat $NAME.bedns | sort -k1,1 -k2,2n > $NAME.bed
