@@ -3,7 +3,7 @@
 # This bash script runs SPAN for every signal file in the experiment with appropriate input and provided parameters.
 # Usage: call_peaks.sh [<FDR> [<GAP>]]
 # <FDR> and <GAP> are passed to SPAN calls as --fdr and --gap parameters, respectively.
-# The default values are 1E-4 and 5.
+# The default values are 0.05 and 0
 
 # Locate SPAN jar file.
 
@@ -21,13 +21,13 @@ fi;
 if [[ $# -ge 1 ]]; then
 	FDR=$1;
 else
-	FDR=1E-4;
+	FDR=0.05;
 fi;
 
 if [[ $# -ge 2 ]]; then
 	GAP=$2;
 else
-	GAP=5;
+	GAP=0;
 fi;
 
 # Launch SPAN with given FDR and GAP for every .bed.gz signal file with appropriate input.
@@ -39,7 +39,7 @@ do :
 	fi
 	java -jar ${SPAN} analyze --bed ./chip-seq-benchmark/H3K36me3/peaks${ID}_${GAP}_${FDR}.bed \
 	    --cs ./hg19.chrom.sizes --fdr ${FDR} -t ./chip-seq-benchmark/H3K36me3/H3K36me3_${ID}.bed.gz \
-	    -c ./chip-seq-benchmark/Input/Input_${ID}.bed.gz --gap ${GAP}
+	    -c ./chip-seq-benchmark/Input/Input_${ID}.bed.gz --gap ${GAP} --keep-cache
 done
 
 for ID in $(find ./chip-seq-benchmark/H3K4me3/ -maxdepth 1 -name 'H3K4me3_*.bed.gz' | sed 's#\./##g; s#^.*H3K4me3_##g; s#\.bed\.gz$##g')
@@ -49,5 +49,5 @@ do :
 	fi
 	java -jar ${SPAN} analyze --bed ./chip-seq-benchmark/H3K4me3/peaks${ID}_${GAP}_${FDR}.bed \
 	    --cs ./hg19.chrom.sizes --fdr ${FDR} -t ./chip-seq-benchmark/H3K4me3/H3K4me3_${ID}.bed.gz \
-	    -c ./chip-seq-benchmark/Input/Input_${ID}.bed.gz --gap ${GAP}
+	    -c ./chip-seq-benchmark/Input/Input_${ID}.bed.gz --gap ${GAP} --keep-cache
 done

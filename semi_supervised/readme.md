@@ -1,4 +1,4 @@
-### SPAN benchmarking
+### SPAN benchmarking in Semi-Supervised mode
 
 We were inspired by the
 article ["Optimizing ChIP-seq peak detectors using visual labels and supervised machine learning", Bioinformatics 33(4), 2017, T. D. Hocking et al.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5408812/)
@@ -37,10 +37,10 @@ $ call_peaks.sh
 If necessary, you can supply FDR control value and GAP parameter as arguments, e.g.
 
 ```bash
-$ call_peaks.sh 1E-6 5
+$ call_peaks.sh 0.05 0
 ```
 
-By default, FDR is controlled at `1E-6`, and `GAP` is `5`. The first launch of this script will likely take significant
+By default, FDR is controlled at `0.05`, and `GAP` is `0`. The first launch of this script will likely take significant
 time; the consequent launches with different FDR control values will be much faster due to caching.
 
 To launch the script for several FDR control and GAP values, you can use the following syntax:
