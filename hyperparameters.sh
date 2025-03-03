@@ -51,8 +51,8 @@ for SNR in 0 0.001 0.01 0.05 0.1 0.3; do
  done;
 done | tee k36me3_gm12878.txt;
 
-wget https://www.encodeproject.org/files/ENCFF813OSH/@@download/ENCFF813OSH.bam -O HSMM_H3K36me3_rep1.bam
-wget https://www.encodeproject.org/files/ENCFF345NRK/@@download/ENCFF345NRK.bam -O HSMM_H3K36me3_rep2.bam
+wget https://www.encodeproject.org/files/ENCFF345NRK/@@download/ENCFF345NRK.bam -O HSMM_H3K36me3_rep1.bam
+wget https://www.encodeproject.org/files/ENCFF813OSH/@@download/ENCFF813OSH.bam -O HSMM_H3K36me3_rep2.bam
 wget https://www.encodeproject.org/files/ENCFF049ADX/@@download/ENCFF049ADX.bam -O HSMM_Input_rep1.bam
 wget https://www.encodeproject.org/files/ENCFF003IHT/@@download/ENCFF003IHT.bam -O HSMM_Input_rep2.bam
 
@@ -123,11 +123,11 @@ for SNR in 0 0.001 0.01 0.05 0.1 0.3; do
 
   echo "$SNR $LOW"
 
-  java -jar span-2.0.jar analyze -t OD1_k27ac_hg19.bed.gz --chrom.sizes hg19.chrom.sizes -c input.bed.gz \
+  java -jar span-2.0.jar analyze -t OD1_k27ac_hg19.bam --chrom.sizes hg19.chrom.sizes \
     --peaks OD1_k27ac_hg19_${SNR}_${LOW}.peak --model OD1_k27ac_hg19_${SNR}_${LOW}.span --fdr 1e-4 \
     --bin 100 --keep-cache --debug --chr chr1  --hmm-snr $SNR --hmm-low $LOW --sensitivity -0.6 --gap 0;
 
-  java -jar span-2.0.jar analyze -t YD11_k27ac_hg19.bed.gz --chrom.sizes hg19.chrom.sizes -c input.bed.gz \
+  java -jar span-2.0.jar analyze -t YD11_k27ac_hg19.bam --chrom.sizes hg19.chrom.sizes \
     --peaks YD11_k27ac_hg19_${SNR}_${LOW}.peak --model YD11_k27ac_hg19_${SNR}_${LOW}.span --fdr 1e-4 \
     --bin 100 --keep-cache --debug --chr chr1 --hmm-snr $SNR --hmm-low $LOW --sensitivity -0.6 --gap 0;
 
