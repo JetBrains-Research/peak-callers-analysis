@@ -74,7 +74,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
    fastq_dir=$(pwd)/fastq genome=hg38 \
-   sicer=True span=False \
+   sicer=True omnipeak=False \
    --rerun-incomplete --rerun-trigger mtime;   
 ```
 
@@ -159,7 +159,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   fastq_dir=$(pwd)/fastq fastq_ext=fastq \
-  span=True span_bin=100 span_threads=2 span_params="--clip 0 --keep-cache" sicer=True \
+  omnipeak=True omnipeak_bin=100 omnipeak_threads=2 omnipeak_params="--clip 0 --keep-cache" sicer=True \
   --rerun-incomplete --rerun-trigger mtime;
 
 ```

@@ -9,7 +9,7 @@ for BAMSF in bams1 bams2 bams3 bams4 bams5; do
 	time snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --use-conda --cores all  --directory $(pwd) --config fastq_dir=$(pwd) start_with_bams=True genome=hg38 macs2=True --rerun-incomplete --rerun-triggers mtime;
 	time snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --use-conda --cores all  --directory $(pwd) --config fastq_dir=$(pwd) start_with_bams=True genome=hg38 macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 --rerun-incomplete --rerun-triggers mtime;
 	time snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --use-conda --cores all  --directory $(pwd) --config fastq_dir=$(pwd) start_with_bams=True genome=hg38 sicer=True --rerun-incomplete --rerun-triggers mtime;
-	time snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --use-conda --cores all  --directory $(pwd) --config fastq_dir=$(pwd) start_with_bams=True genome=hg38 span=True  --rerun-incomplete --rerun-triggers mtime;
+	time snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --use-conda --cores all  --directory $(pwd) --config fastq_dir=$(pwd) start_with_bams=True genome=hg38 omnipeak=True  --rerun-incomplete --rerun-triggers mtime;
 
 	# MACS3 / SICER2
 	time snakemake -p -s ~/work/chipseq-smk-pipeline/Snakefile all --use-conda --cores all  --directory $(pwd) --config fastq_dir=$(pwd) start_with_bams=True genome=hg38 macs3=True --rerun-incomplete --rerun-triggers mtime;

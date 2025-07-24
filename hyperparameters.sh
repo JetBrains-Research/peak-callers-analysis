@@ -3,10 +3,9 @@
 mkdir -p ~/data/2025_hyperparameters
 cd ~/data/2025_hyperparameters
 
-# Download SPAN
-SPAN_JAR=span.jar
-wget https://download.jetbrains.com/biolabs/span/span-2.0.6610.jar -O $SPAN_JAR
-#SPAN_JAR=~/work/span/build/libs/span-2.0.build.jar
+# Download OMNIPEAK
+OMNIPEAK_JAR=omnipeak.jar
+wget https://download.jetbrains.com/biolabs/omnipeak/omnipeak-1.0.6679.jar -O $OMNIPEAK_JAR
 
 # Download chromosome sizes
 wget https://hgdownload.soe.ucsc.edu/goldenpath/hg19/bigZips/hg19.chrom.sizes
@@ -42,15 +41,13 @@ wget https://artyomovlab.wustl.edu/publications/supp_materials/aging/chipseq/Y20
 # for LOW in 0 0.1 0.3 0.5; do
 
 
-SPAN_JAR=span-2.0.6639.jar
-
 for SNR in 0 0.001 0.01 0.1 0.2; do
  for LOW in 0 0.1 0.3 0.5; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K36me3_rep1.bam -c GM12878_Input_rep1.bam \
-    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K36me3_rep1_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K36me3_rep1.bam -c GM12878_Input_rep1.bam \
+    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K36me3_rep1_${SNR}_${LOW}.omnipeak --debug \
     --peaks GM12878_H3K36me3_rep1_${SNR}_${LOW}.peak --chr chr1;
 
  done;
@@ -63,8 +60,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K36me3_rep2.bam -c GM12878_Input_rep2.bam \
-    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K36me3_rep2_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K36me3_rep2.bam -c GM12878_Input_rep2.bam \
+    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K36me3_rep2_${SNR}_${LOW}.omnipeak --debug \
     --peaks GM12878_H3K36me3_rep2_${SNR}_${LOW}.peak --chr chr1;
 
  done;
@@ -76,8 +73,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -t YD11_k27ac_hg19.bed.gz -c input.bed.gz --chrom.sizes hg19.chrom.sizes \
-    --peaks YD11_k27ac_hg19_${SNR}_${LOW}.peak --model YD11_k27ac_hg19_${SNR}_${LOW}.span \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -t YD11_k27ac_hg19.bed.gz -c input.bed.gz --chrom.sizes hg19.chrom.sizes \
+    --peaks YD11_k27ac_hg19_${SNR}_${LOW}.peak --model YD11_k27ac_hg19_${SNR}_${LOW}.omnipeak \
    --keep-cache --debug --chr chr1 --hmm-snr $SNR --hmm-low $LOW;
 
  done;
@@ -89,8 +86,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -t OD1_k27ac_hg19.bed.gz -c input.bed.gz --chrom.sizes hg19.chrom.sizes \
-    --peaks OD1_k27ac_hg19_${SNR}_${LOW}.peak --model OD1_k27ac_hg19_${SNR}_${LOW}.span \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -t OD1_k27ac_hg19.bed.gz -c input.bed.gz --chrom.sizes hg19.chrom.sizes \
+    --peaks OD1_k27ac_hg19_${SNR}_${LOW}.peak --model OD1_k27ac_hg19_${SNR}_${LOW}.omnipeak \
    --keep-cache --debug --chr chr1  --hmm-snr $SNR --hmm-low $LOW;
 
  done;
@@ -102,8 +99,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-    java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t HepG2_H3K27ac_rep1.bam -c HepG2_Input_rep1.bam \
-   --keep-cache --model HepG2_H3K27ac_rep1_${SNR}_${LOW}.span --debug \
+    java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t HepG2_H3K27ac_rep1.bam -c HepG2_Input_rep1.bam \
+   --keep-cache --model HepG2_H3K27ac_rep1_${SNR}_${LOW}.omnipeak --debug \
    --peaks HepG2_H3K27ac_rep1_${SNR}_${LOW}.peak --chr chr1 --hmm-snr $SNR --hmm-low $LOW;
 
  done;
@@ -115,8 +112,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t HepG2_H3K27ac_rep2.bam -c HepG2_Input_rep2.bam \
-   --keep-cache --model HepG2_H3K27ac_rep2_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t HepG2_H3K27ac_rep2.bam -c HepG2_Input_rep2.bam \
+   --keep-cache --model HepG2_H3K27ac_rep2_${SNR}_${LOW}.omnipeak --debug \
    --peaks HepG2_H3K27ac_rep2_${SNR}_${LOW}.peak --chr chr1 --hmm-snr $SNR --hmm-low $LOW;
 
  done;
@@ -128,8 +125,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K4me3_rep1.bam -c GM12878_Input_rep1.bam \
-    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K4me3_rep1_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K4me3_rep1.bam -c GM12878_Input_rep1.bam \
+    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K4me3_rep1_${SNR}_${LOW}.omnipeak --debug \
     --peaks GM12878_H3K4me3_rep1_${SNR}_${LOW}.peak --chr chr1;
 
  done;
@@ -141,8 +138,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K4me3_rep2.bam -c GM12878_Input_rep2.bam \
-    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K4me3_rep2_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t GM12878_H3K4me3_rep2.bam -c GM12878_Input_rep2.bam \
+    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model GM12878_H3K4me3_rep2_${SNR}_${LOW}.omnipeak --debug \
     --peaks GM12878_H3K4me3_rep2_${SNR}_${LOW}.peak --chr chr1;
 
  done;
@@ -154,8 +151,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t HSMM_H3K36me3_rep1.bam -c HSMM_Input_rep1.bam \
-    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model HSMM_H3K36me3_rep1_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t HSMM_H3K36me3_rep1.bam -c HSMM_Input_rep1.bam \
+    --keep-cache --hmm-snr $SNR --hmm-low $LOW --model HSMM_H3K36me3_rep1_${SNR}_${LOW}.omnipeak --debug \
     --peaks HSMM_H3K36me3_rep1_${SNR}_${LOW}.peak --chr chr1;
 
  done;
@@ -167,8 +164,8 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t HSMM_H3K36me3_rep2.bam -c HSMM_Input_rep2.bam \
-  --keep-cache --hmm-snr $SNR --hmm-low $LOW --model HSMM_H3K36me3_rep2_${SNR}_${LOW}.span --debug \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t HSMM_H3K36me3_rep2.bam -c HSMM_Input_rep2.bam \
+  --keep-cache --hmm-snr $SNR --hmm-low $LOW --model HSMM_H3K36me3_rep2_${SNR}_${LOW}.omnipeak --debug \
   --peaks HSMM_H3K36me3_rep2_${SNR}_${LOW}.peak --chr chr1;
 
  done;
@@ -179,9 +176,9 @@ for SNR in 0 0.001 0.01 0.1 0.2; do
 
   echo "$SNR $LOW"
 
-  java -jar $SPAN_JAR analyze -cs hg38.chrom.sizes -t CD34_H3K27ac_hg38_ENCFF026YFQ.bam \
+  java --add-modules=jdk.incubator.vector -jar $OMNIPEAK_JAR analyze -cs hg38.chrom.sizes -t CD34_H3K27ac_hg38_ENCFF026YFQ.bam \
     -c CD34_Control_hg38_ENCFF112IIL.bam --keep-cache \
-    --model CD34_H3K27ac_hg38_ENCFF026YFQ_${SNR}_${LOW}.span --debug \
+    --model CD34_H3K27ac_hg38_ENCFF026YFQ_${SNR}_${LOW}.omnipeak --debug \
     --peaks CD34_H3K27ac_hg38_ENCFF026YFQ_${SNR}_${LOW}.peak --chr chr1 \
     --hmm-snr $SNR --hmm-low $LOW;
 
