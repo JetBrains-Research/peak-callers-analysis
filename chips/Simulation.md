@@ -24,7 +24,7 @@ Reference
 
 # Download data
 ```
-WORK_DIR=~/data/2023_chips
+WORK_DIR=~/data/chips
 cd $WORK_DIR
 mkdir -p $WORK_DIR/peaks
 
@@ -59,22 +59,25 @@ Assuming that it is installed to `~/work/chipseq-smk-pipeline`.
 ```
 conda activate snakemake
 
+# MACS2
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
    fastq_dir=$(pwd)/fastq genome=hg38 \
-   macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix=q0.05 \
+   macs2=True
    --rerun-incomplete --rerun-trigger mtime;
 
+# MACS2 broad
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
    fastq_dir=$(pwd)/fastq genome=hg38 \
    macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
    --rerun-incomplete --rerun-trigger mtime;   
 
+# SICER
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
    fastq_dir=$(pwd)/fastq genome=hg38 \
-   sicer=True omnipeak=False \
+   sicer=True 
    --rerun-incomplete --rerun-trigger mtime;   
 ```
 
@@ -113,7 +116,6 @@ bash simulate.sh
 bash simulate_mixture.sh
 ```
 
-
 # Prepare control for peak calling 
 
 1. Launch chipseq pipeline on input files only to obtain bam files. 
@@ -124,43 +126,38 @@ for F in $(ls bams/*input*.bam | grep -v chr15); do
     samtools index $F; 
     samtools view $F chr15 -b > ${F/.bam/_chr15.bam}; 
 done
- 
-for F in bams/*input*chr*.bam; do 
-    echo $F; 
-    bedtools bamtofastq -i $F -fq ${F/.bam/.fastq}; 
-done
-
-mv bams/*input*chr*.fastq fastq/
 ```
 
-# Launch peak callers
+# Launch all peak callers
 
-```
-# Perform peak calling using chipseq snakemake pipeline
-
+1. Alignment.
+```bash
 conda activate snakemake
+cd ~/data/chips
 
-cd /data/2023_chips
- 
-echo "MACS2 narrow"
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   fastq_dir=$(pwd)/fastq fastq_ext=fastq \
-  macs2=True macs2_mode=narrow macs2_params="-q 0.05" macs2_suffix=q0.05 \
   --rerun-incomplete --rerun-trigger mtime;
-  
-echo "MACS2 broad"
+```
+
+3. Peak calling with default settings (MACS2 narrow, HOMER factor).
+```bash
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
-  fastq_dir=$(pwd)/fastq fastq_ext=fastq \
+  start_with_bams=True \
+  macs2=True sicer=True homer=True hotspot=True peakseq=True lanceotron=True \
+  omnipeak=True omnipeak_threads=1 omnipeak_params="--clip 0" \
+  --rerun-incomplete --rerun-trigger mtime;
+```
+
+4. Peak calling other settings (MACS2 broad, HOMER histone).
+```bash
+snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
+  all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
+  start_with_bams=True \
   macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
+  homer=True homer_style=histone homer_suffix=regions.bed \
   --rerun-incomplete --rerun-trigger mtime;
-  
-snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
-  all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
-  fastq_dir=$(pwd)/fastq fastq_ext=fastq \
-  omnipeak=True omnipeak_bin=100 omnipeak_threads=2 omnipeak_params="--clip 0" sicer=True \
-  --rerun-incomplete --rerun-trigger mtime;
-
 ```
 
