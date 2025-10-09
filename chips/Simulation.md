@@ -141,12 +141,14 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   --rerun-incomplete --rerun-trigger mtime;
 ```
 
-3. Peak calling with default settings (MACS2 narrow, HOMER factor).
+3. Peak calling with default settings (MACS2 narrow, HOMER factor). <br>
+We slightly tweak omnipeak and lanceotron parameters for speedup computation.
 ```bash
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   start_with_bams=True \
-  macs2=True sicer=True homer=True hotspot=True peakseq=True lanceotron=True \
+  macs2=True sicer=True homer=True hotspot=True peakseq=True \
+  lanceotron=True lanceotron_bw_params="--extendReads 150 -bs 10 --normalizeUsing RPKM" \
   omnipeak=True omnipeak_threads=1 omnipeak_params="--clip 0" \
   --rerun-incomplete --rerun-trigger mtime;
 ```
