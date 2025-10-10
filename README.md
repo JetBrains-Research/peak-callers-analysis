@@ -35,8 +35,9 @@ the rest.
 
 # Peak calling
 
-1. Fetch [chipseq-smk-pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) GitHub repository.
-2. Alignment of ChIP-seq datasets to the reference genome (optional).
+1. Fetch [chipseq-smk-pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) GitHub repository into `~/work/chipseq-smk-pipeline`.
+2. Navigate to the dataset folder.
+3. Launch alignment of datasets to the reference genome (optional).
 
 ```bash
 echo "Alignment"
@@ -45,6 +46,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   fastq_dir=$(pwd)/fastq fastq_ext=fastq \
   --rerun-incomplete --rerun-trigger mtime;
 ```
+Use additional `bowtie2_params="-X 2000 --dovetail"` parameter for ATAC-seq alignment. 
 
 3. Peak calling of ChIP-seq / ATAC-seq datasets.
 
@@ -62,15 +64,6 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   start_with_bams=true \
   macs2=True macs2_mode=broad macs2_params="--broad --broad-cutoff 0.1" macs2_suffix=broad0.1 \
   homer=True homer_style=histone homer_suffix=regions.bed \
-  --rerun-incomplete --rerun-trigger mtime;
-```
-
-5. Alignment and peak calling of Immgen ATAC-seq dataset.
-
-```bash
-snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
-  all --use-conda --cores all --directory $(pwd) --config genome=mm10 \
-  macs2=True bowtie2_params="-X 2000 --dovetail" span=True span_fragment=0 \
   --rerun-incomplete --rerun-trigger mtime;
 ```
 
