@@ -28,9 +28,10 @@ Prepare datasets by downloading files mentioned in [Datasets.xlsx](./Datasets.xl
 6. Download `tsv` files with transcription counts from the tab `RNAseq` into `~/data/2025_transcription` folder.
 7. Download `bam` files from the tab `Chips` into `~/data/2025_chips` folder.
 
-Please ensure to use a correct genome version for the datasets -  `mm10` for `Immgen`, `hg19` for `ABF` and `hg38` for
-the rest.<br>
-Please place `fastq` datasets into `fastq` subfolder, and `bam` datasets into `bam` subfolder.<br>
+**Files layout** - please place `fastq` datasets into `fastq` subfolder, and `bam` datasets into `bam` subfolder.<br>
+Datasets **without control** should be prepared by copying all the raw data without control files into the corresponding folders with `_no_control` suffix.<br>
+Please ensure to use **a correct genome** version for the datasets -  `mm10` for `Immgen`, `hg19` for `ABF` and `hg38` for
+the rest.
 
 # Peak calling
 
