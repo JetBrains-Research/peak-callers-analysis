@@ -71,6 +71,13 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 
 See [Simulation instructions](./chips/Simulation.md) for details.
 
+
+# Scripts
+
+* `benchmark.sh` - preliminary benchmark to launch peak calling on a limited set of input data to estimate running time
+* `hyperparameters.sh` - hyperparameter selection procedure for Omnipeak
+* `peps.sh` - launch Omnipeak on a limited set of input data to demonstrate the effect of the PEP threshold
+
 # Requirements
 
 Please ensure that you have the following Python packages installed:
