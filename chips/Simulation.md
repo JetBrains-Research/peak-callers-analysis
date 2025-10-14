@@ -1,8 +1,7 @@
 Simulation
 ==========
 
-**Chips** is available from bioconda and on [GitHub](https://github.com/gymreklab/chips).
-Paper in [Bioinformatics](https://link.springer.com/article/10.1186/s12859-021-04097-5).
+This document describes how to simulate reads for ChIP-seq data with [**Chips**](https://bioconda.github.io/recipes/chips/README.html).<br>
 
 # Data
 Download data for human CD14-positive monocyte cells.
@@ -22,8 +21,17 @@ Control
 Reference
 * [hg38 reference fa](https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/)
 
+# Prerequisites
+
+Please ensure that you have installed 
+* [chips](https://bioconda.github.io/recipes/chips/README.html)
+* [snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) 
+* [samtools](https://github.com/samtools/samtools)
+
+Clone [chipseq-smk-pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) GitHub repository into `~/work/chipseq-smk-pipeline`.
+
 # Download data
-```
+```bash
 WORK_DIR=~/data/chips
 cd $WORK_DIR
 mkdir -p $WORK_DIR/peaks
@@ -56,9 +64,7 @@ cd ..
 
 For MACS2, SICER peaks launch [ChIP-seq snakemake pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) from fastq files.
 Assuming that it is installed to `~/work/chipseq-smk-pipeline`.
-```
-conda activate snakemake
-
+```bash
 # MACS2
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
@@ -82,7 +88,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 ```
 
 Copy peaks to sample ground truth from
-```
+```bash
 mkdir -p peaks
 cp macs2/H3K4me3*.narrowPeak peaks
 cp macs2/H3K27ac*.broadPeak peaks
@@ -93,16 +99,15 @@ cp sicer/H3K36me3*FDR0.01 peaks
 
 # Learn models and create modified models with tweaked FRIP
 
-```
+```bash
 # Ensure that chips is available!
-conda activate chips
 bash learn.sh
 bash frip.sh
 ```
 
 # Simulate reads
 
-```
+```bash
 # Ensure that chips is available!
 mkdir fastq
 bash simulate.sh
@@ -111,7 +116,7 @@ bash simulate.sh
 
 # Simulate mixed_reads
 
-```
+```bash
 # Ensure that chips is available!
 bash simulate_mixture.sh
 ```
@@ -120,7 +125,7 @@ bash simulate_mixture.sh
 
 1. Launch chipseq pipeline on input files only to obtain bam files. 
 2. Filter to chromosome 15
-```
+```bash
 for F in $(ls bams/*input*.bam | grep -v chr15); do 
     echo $F;
     samtools index $F; 
@@ -141,7 +146,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   --rerun-incomplete --rerun-trigger mtime;
 ```
 
-3. Peak calling with default settings (MACS2 narrow, HOMER factor). <br>
+2. Peak calling with default settings (MACS2 narrow, HOMER factor). <br>
 We slightly tweak omnipeak and lanceotron parameters for speedup computation.
 ```bash
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
@@ -153,7 +158,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   --rerun-incomplete --rerun-trigger mtime;
 ```
 
-4. Peak calling other settings (MACS2 broad, HOMER histone).
+3. Peak calling other settings (MACS2 broad, HOMER histone).
 ```bash
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \

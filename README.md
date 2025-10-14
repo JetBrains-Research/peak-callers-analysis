@@ -48,7 +48,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 ```
 Use additional `bowtie2_params="-X 2000 --dovetail"` parameter for ATAC-seq alignment. 
 
-3. Peak calling of ChIP-seq / ATAC-seq datasets.
+4. Peak calling of ChIP-seq / ATAC-seq datasets.
 
 ```bash
 echo "Peak calling with default settings (MACS2 narrow, HOMER factor)"
