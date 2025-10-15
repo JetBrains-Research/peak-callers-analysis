@@ -1,9 +1,10 @@
 Simulation
 ==========
 
-This document describes how to simulate reads for ChIP-seq data with [**Chips**](https://bioconda.github.io/recipes/chips/README.html).<br>
+This document describes how to simulate reads for ChIP-seq data with [**Chips**](https://bioconda.github.io/recipes/chips/README.html).
 
 # Data
+
 Download data for human CD14-positive monocyte cells.
 
 ChIP-seq
@@ -31,6 +32,7 @@ Please ensure that you have installed
 Clone [chipseq-smk-pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) GitHub repository into `~/work/chipseq-smk-pipeline`.
 
 # Download data
+
 ```bash
 WORK_DIR=~/data/chips
 cd $WORK_DIR
@@ -62,9 +64,12 @@ samtools faidx GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 cd ..
 ```
 
+# Peak calling of reference peaks
+
 For MACS2, SICER peaks launch [ChIP-seq snakemake pipeline](https://github.com/JetBrains-Research/chipseq-smk-pipeline) from fastq files.
-Assuming that it is installed to `~/work/chipseq-smk-pipeline`.
+
 ```bash
+cd $WORK_DIR
 # MACS2
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
    all --use-conda --cores all --directory $(pwd) --config fastq_ext=fastq.gz \
@@ -89,6 +94,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 
 Copy peaks to sample ground truth from
 ```bash
+cd $WORK_DIR
 mkdir -p peaks
 cp macs2/H3K4me3*.narrowPeak peaks
 cp macs2/H3K27ac*.broadPeak peaks
@@ -97,10 +103,14 @@ cp sicer/H3K27me3*FDR0.01 peaks
 cp sicer/H3K36me3*FDR0.01 peaks
 ```
 
-# Learn models and create modified models with tweaked FRIP
+# Copy scripts
+
+Copy all the scripts under the `chips` folder into `$WORK_DIR`.
+
+# Learn Chips models and create modified models with tweaked FRIP
 
 ```bash
-# Ensure that chips is available!
+cd $WORK_DIR
 bash learn.sh
 bash frip.sh
 ```
@@ -108,23 +118,22 @@ bash frip.sh
 # Simulate reads
 
 ```bash
-# Ensure that chips is available!
+cd $WORK_DIR
 mkdir fastq
 bash simulate.sh
 ```
 
 
-# Simulate mixed_reads
+# Simulate mixed signal reads
 
 ```bash
-# Ensure that chips is available!
+cd $WORK_DIR
 bash simulate_mixture.sh
 ```
 
 # Prepare control for peak calling 
 
-1. Launch chipseq pipeline on input files only to obtain bam files. 
-2. Filter to chromosome 15
+Filter to chromosome 15
 ```bash
 for F in $(ls bams/*input*.bam | grep -v chr15); do 
     echo $F;
@@ -137,9 +146,7 @@ done
 
 1. Alignment.
 ```bash
-conda activate snakemake
-cd ~/data/chips
-
+cd $WORK_DIR
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   fastq_dir=$(pwd)/fastq fastq_ext=fastq \
@@ -149,6 +156,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 2. Peak calling with default settings (MACS2 narrow, HOMER factor). <br>
 We slightly tweak omnipeak and lanceotron parameters for speedup computation.
 ```bash
+cd $WORK_DIR
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   start_with_bams=True \
@@ -160,6 +168,7 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
 
 3. Peak calling other settings (MACS2 broad, HOMER histone).
 ```bash
+cd $WORK_DIR
 snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   all --cores all --use-conda --directory $(pwd) --config genome=hg38 \
   start_with_bams=True \
@@ -168,3 +177,6 @@ snakemake --printshellcmds -s ~/work/chipseq-smk-pipeline/Snakefile \
   --rerun-incomplete --rerun-trigger mtime;
 ```
 
+# Analysis
+
+Now, please refer to the dedicated Jupyter notebook for further analysis.
