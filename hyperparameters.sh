@@ -5,7 +5,7 @@ cd ~/data/2025_hyperparameters
 
 # Download OMNIPEAK
 OMNIPEAK_JAR=omnipeak.jar
-wget https://download.jetbrains.com/biolabs/omnipeak/omnipeak-1.0.6679.jar -O $OMNIPEAK_JAR
+wget https://download.jetbrains.com/biolabs/omnipeak/omnipeak-1.3.6757.jar -O $OMNIPEAK_JAR
 
 # Download chromosome sizes
 wget https://hgdownload.soe.ucsc.edu/goldenpath/hg19/bigZips/hg19.chrom.sizes
